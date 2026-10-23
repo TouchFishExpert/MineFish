@@ -3,7 +3,9 @@
 基于 [Mindcraft](https://github.com/mindcraft-bots/mindcraft) 二次开发的 Minecraft AI 队友系统，支持中文交流、多机器人协作、分层记忆、实时环境感知与控制台。
 
 项目仍在持续开发。本仓库保存当前后端、实际使用的网页控制台，以及独立的 Electron 桌面界面演示源码。
-![Uploading image.png…]()
+<img width="1586" height="992" alt="280cff35131c2e0c4f40ef99d7156d3f" src="https://github.com/user-attachments/assets/72b2af43-70f3-482a-9c02-0a59f19449cc" />
+
+
 
 ## 当前能力
 
