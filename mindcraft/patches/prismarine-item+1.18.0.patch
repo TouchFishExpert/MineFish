@@ -1,0 +1,17 @@
+diff --git a/node_modules/prismarine-item/index.js b/node_modules/prismarine-item/index.js
+--- a/node_modules/prismarine-item/index.js
++++ b/node_modules/prismarine-item/index.js
+@@ -259,7 +259,12 @@ function loader (registryOrVersion) {
+       const useStoredEnchantments = registry.supportFeature('booksUseStoredEnchantments') && this.name === 'enchanted_book'
+ 
+       if (this.componentMap?.has('enchantments')) {
+-        return this.componentMap.get('enchantments').data
++        const data = this.componentMap.get('enchantments').data
++        const enchantments = Array.isArray(data) ? data : data?.enchantments ?? []
++        return enchantments.map(ench => ({
++          name: ench.name ?? registry.enchantments[ench.id]?.name ?? null,
++          lvl: ench.lvl ?? ench.level
++        }))
+       }
+ 
+       if (typeOfEnchantLevelValue === 'short' && enchantNbtKey === 'ench') {

@@ -1,0 +1,110 @@
+当前陆地寻路的数据链与载具导航设计依据
+检查日期：2026-10-23（Asia/Shanghai）
+
+范围
+本次读取当前实际安装及本地补丁后的源代码，并用真实 Minecraft 1.21.6 方块状态构造离线世界运行实际 A* / Movements。
+没有修改运行中的导航模块，没有重启机器人，没有调用模型，没有在服务器上造测试地形。
+版本：Mineflayer 4.33.0；mineflayer-pathfinder 2.4.5；prismarine-physics 1.11.1。
+配套数据：land-navigation-data-trace-20261023.json；复现脚本：trace-land-navigation.cjs。
+JSON 包含输入、方块样本、每次出堆的 g/h/f、实际展开的邻居、原始路径、代价、统计量、源文件 SHA256。
+
+1. 模型与寻路的边界
+模型选择移动目标或跟随对象；goToPosition/goToPlayer/followPlayer 将其变成 GoalNear/GoalFollow 等目标。
+模型不逐帧控制行走，也不接收完整方块地图。寻路使用客户端收到的区块和实体数据，直接通过 bot.blockAt() 查询。
+bot.blockAt() 最终读取 bot.world.getBlock()；区块未加载返回 null。未加载不等于空气，也不代表知道该区域没有路径。
+寻路数据范围与发送给模型的 16 格环境摘要、实体交互的 64 格选取范围是不同概念。
+插件默认 searchRadius=-1 仅表示不设该搜索代价上界，仍受已加载世界、搜索预算和内存限制；并非拥有全服务器地图。
+
+2. 方块如何变成可通行信息
+原始方块有 position、type/stateId、name、boundingBox、shapes、门开关等属性。
+Movements.getBlock() 衍生 safe（可占据空间）、physical（支撑/实体块）、height（表面高度）、liquid、climbable、replaceable、openable 等。
+safe 不等于完整环境安全证明；例如当前将水作为可通过的液体，窒息、跌落伤害等也不是统一的精确风险函数。
+实体按实际位置和包围盒覆盖到方块坐标，形成 entityIntersections[x,y,z] 的占据计数/权重；主要在每次搜索开始更新，并非预测其他实体未来轨迹。
+
+3. 当前搜索节点
+Move = {x,y,z,remainingBlocks,cost,toBreak,toPlace,parkour,hash}。
+x/y/z 是取整后的玩家脚部位置，不是视线位置或马、船的坐标。
+remainingBlocks 是该搜索分支预计剩余垫路方块数；cost 是从父节点进入此节点的这一步代价。
+toBreak 记录要挖的方块；toPlace 既可记录放方块，也可用 useOne 标记开门等交互。
+当前 hash 仅为 x,y,z，未包含 remainingBlocks、朝向、速度、载具和世界修改历史。
+A* 外包装节点 PathNode 另存 g、h、f、parent：g 为累计代价，h 为剩余代价估计，f=g+h，parent 用来回溯路径。
+
+4. 邻居是怎么产生的
+getNeighbors() 调用四向平移、向上跳、向下落、跑酷跨越、四个斜向移动、上下移动、梯子/藤蔓等规则。
+例如平移要检查目标脚部、头部和脚下支撑；跳跃还检查头顶净空和落点高度；斜移检查拐角空间，避免直接穿墙角。
+这些规则围绕玩家体型、一步高度和步行物理构建。更换速度参数不能让马通过过窄通道，也不能让船自动避开船身会撞到的岸边。
+它按需展开邻居，而不是预先生成整张地图上的图。
+
+5. 代价与 A*
+平移基础代价=1；普通斜移=根号2；向上跳基础代价=2；液体增加 liquidCost；放方块增加 placeCost；实体/排除区域有额外代价。
+若允许挖掘，会按工具和挖掘时间估算劳动代价；当前普通 goToGoal 已设置 canDig=false，不挖建筑开路。
+当前优先使用的配置 placeCost=2、digCost=10；候选备用配置继承 placeCost=1，但也禁止挖掘。不是两套完全独立的寻路算法。
+当前允许使用背包中 dirt/cobblestone 垫路，allow1by1towers=true；允许跑酷和疾跑；默认 maxDropDown=4，液体落点另有规则。
+h 对常用目标为水平八方向距离加绝对高差：max(|dx|,|dz|)+(根号2-1)*min(|dx|,|dz|)+|dy|。
+开放集合用二叉最小堆取 f 最小的候选，关闭集合标记已展开坐标，父指针回溯出路径。
+注意：不是必然最短或最快。跑酷跨多格有低基础代价，h 可能高估真实图代价；GoalNear 接受范围内节点，但 h 仍估到中心；同坐标不同资源状态也会合并。
+因此当前 A* 是实用的带近似和简化的搜索实现，不宜向外宣称严格最优路线。
+
+6. 真实离线样本
+统一起点(0,64,0)、精确终点(4,64,0)，使用 GoalBlock 以免到附近就停止；这些坐标是离线夹具，不是服务器地形。
+平地：路径 x=1,2,3,4；累计代价4；closed 集合计数4，含终点的出堆次数5。
+两格高障碍位于 x=2,z=0：路径(1,64,0)->(2,64,1)->(3,64,1)->(4,64,0)；代价4.828427。
+一格地板缺口、正常跑酷开启：路径 x=1->3->4，其中1到3是 parkour；代价3，并未放方块。
+同一缺口、仅在夹具中关闭跑酷以隔离垫路：路径 x=1,2,3,4；进入x=2先放1个方块；这一步代价3，总代价6，预算6块变5块。
+这解释了为什么当前的 cost 不能直接当成格数、游戏 tick 或毫秒。
+
+7. 路径与控制器
+搜索返回 status、cost、time、visitedNodes、generatedNodes、path、context。
+success=搜到可达目标的路线；partial=本次计算分片结束、可继续；timeout=搜索预算耗尽；noPath=本次可展开的图已耗尽。
+success 不表示角色已经到达。原始整格节点还要经过表面高度/格中心处理，再交给实时执行器。
+执行器每个 physicsTick 读真实位置，转向下个节点，设置 forward/jump/sprint；用 PlayerState+simulatePlayer 预测能否直走或跳跃。
+正常步行每tick约50毫秒。普通下一节点阈值在本地补丁中为 |dx|、|dz|<=0.175，|dy|<1；预测和其他辅助分支仍有不同阈值。
+最终 goToGoal 还核对 goal.isEnd，避免把 Promise 返回当成已到达。
+blockUpdate、相邻区块加载、目标移动、放置错误、卡住等会触发重新规划；动态实体没有完整的实时运动预测避障。
+
+8. 时间预算不是同一件事
+插件普通搜索预算默认5000ms，每次 compute 分片约40ms；这是计算预算，不是动作必须等待5秒。
+goToGoal 的预检查传入1000ms，但 getPathTo() 只取生成器第一份结果，可能先在40ms处得到partial，并非必定完整搜索1秒。
+节点未推进3500ms时，在寻路更新函数内重置路径；不是独立于更新事件的看门狗，也不是整个导航动作的统一截止时间。
+Mindcraft附近开门辅助每200ms检查，累计约1200ms未移动则尝试开门；跟随技能另有500ms维护循环，不替代真正的寻路tick。
+本次没有调整以上时间参数。
+
+9. 载具目前的实际边界
+riding.js 能观察乘坐关系、顺序，并按原版规则推断部分座位/驾驶条件；entity_interaction.js 能走近、右键并等待上乘确认。
+没有骑乘导航分流。底层 mount 事件暂停步行物理和 physicsTick，而 pathfinder.monitorMovement 正依赖 physicsTick。
+本地已验证 mount 后该更新事件归零；仅设置 forward 不会自动发出载具输入包。
+底层有 moveVehicle() 但当前 src 没有调用，接口存在也不代表完整的车辆动力学、朝向和位置同步已实现。
+当前 vehicleKind() 不包含 pig/strider；骑猪连专门的可驾驶条件和上乘确认分支也尚未覆盖，应如实视为未实现。
+
+10. 建议设计：公共框架 + 不同运动模型
+公共部分：Goal、已加载世界视图、A*开放/关闭集合、路径结果、取消与进度、可观测日志。
+状态采集：玩家和载具分别记录 position/yaw/velocity/onGround/fluid、实际乘坐关系、数据时间和未知项；不能把玩家座位位置当成马蹄/船底位置。
+能力描述：载具/骑手组合碰撞体、移动速度、台阶和跳跃能力、鞍/驯服/控制物品条件；数据未知时保留未知，不编造可驾驶状态。
+马：地面支撑和净空图可复用思想，但按马和骑手组合尺寸生成可达邻居，使用坐骑速度/跳跃与相应控制协议。
+船：先设计按船体尺寸检查的水面通道；局部控制考虑朝向、转弯、惯性、减速、岸边和真实船体位置。窄通道可考虑离散朝向或运动原语，不必一开始把所有速度都放进全局A*。
+猪：地面图部分复用；控制条件/胡萝卜钓竿、朝向、加速和状态同步单独实现，不能直接复制马的按键。
+矿车：轨道连接图、坡度/动力/站点与到站策略；由轨道约束路线，不做自由地面驾驶。
+同一任务内存在步行->上乘->行驶->下乘->步行时，将换乘作为有前置条件、确认与失败出口的明确步骤。
+控制循环必须在mounted状态继续运行；进度看门狗也须独立于步行 physicsTick，且从真实位移/目标接近度判断推进。
+代价建议统一到预计tick/耗时，风险和资源额外加权，并用实测校准。高级模型只选择目标，局部50ms控制不用每帧请求模型。
+
+11. 开源参考及证据边界
+不能宣称 GitHub 没有相关实现，也不能把API有控制方法等同于适配当前服务器并通过驾驶验收。
+mineflayer原生手动载具示例：https://github.com/PrismarineJS/mineflayer/blob/master/examples/jumper.js
+baritone-ts 有公开 BoatController：https://github.com/nuxdie/baritone-ts/blob/main/src/movements/boat/BoatController.ts
+本次读取的该文件 blob SHA：68bf79d4d09fc2f76ece2b55a06bb5d99f163054。
+其 navigateToward 主要根据目标方向设置look和forward；该控制器内未见水路A*绕障、船体碰撞预测或停车距离计算；未在我们的1.21.6环境试用，不能按README宣称已解决。
+原版骑猪控制条件参考Minecraft官方说明：https://www.minecraft.net/da-dk/article/irl-crafting--hamborghini--the-rideable-pig
+真正有价值的交付可以是：可复现、可测试、可观测、适配Mineflayer/Java1.21.6的多种移动模式导航，明确哪些原始算法复用、哪些实现新增，并公布失败边界。
+
+主要本地源码（相对 mindcraft/）
+src/agent/library/skills.js：configureNavigationMovements、goToGoal、goToPosition、followPlayer。
+node_modules/mineflayer-pathfinder/lib/move.js：图节点与hash。
+node_modules/mineflayer-pathfinder/lib/movements.js：方块派生数据、邻居和代价。
+node_modules/mineflayer-pathfinder/lib/astar.js：开放/关闭集合、g/h/f、预算、路径回溯。
+node_modules/mineflayer-pathfinder/lib/goals.js：目标判断与启发函数。
+node_modules/mineflayer-pathfinder/index.js：分片规划、路径后处理、执行、重规划。
+node_modules/mineflayer-pathfinder/lib/physics.js：步行预测控制。
+node_modules/mineflayer/lib/plugins/physics.js：玩家物理、输入与mount暂停。
+node_modules/mineflayer/lib/plugins/blocks.js：区块/方块数据入口。
+src/agent/library/riding.js、entity_interaction.js：当前乘坐观察及上乘流程。

@@ -1,0 +1,264 @@
+diff --git a/node_modules/mineflayer/lib/plugins/digging.js b/node_modules/mineflayer/lib/plugins/digging.js
+--- a/node_modules/mineflayer/lib/plugins/digging.js
++++ b/node_modules/mineflayer/lib/plugins/digging.js
+@@ -242,11 +242,14 @@
+       enchantments = enchantments.concat(helmetEnchantments)
+     }
+ 
++    if (block.material === 'incorrect_for_wooden_tool')
++      block.material = 'mineable/pickaxe'
++
+     const creative = bot.game.gameMode === 'creative'
+     return block.digTime(
+       type,
+       creative,
+-      bot.entity.isInWater,
++      false, // isInWater, water calc is bugged, so always false
+       !bot.entity.onGround,
+       enchantments,
+       bot.entity.effects
+diff --git a/node_modules/mineflayer/lib/plugins/entities.js b/node_modules/mineflayer/lib/plugins/entities.js
+--- a/node_modules/mineflayer/lib/plugins/entities.js
++++ b/node_modules/mineflayer/lib/plugins/entities.js
+@@ -271,7 +271,8 @@
+     entity.pitch = conv.fromNotchianPitchByte(packet.pitch)
+     entity.headPitch = conv.fromNotchianPitchByte(packet.headPitch)
+ 
+-    const notchVel = new Vec3(packet.velocityX, packet.velocityY, packet.velocityZ)
++    const velocity = packet.velocity || { x: packet.velocityX, y: packet.velocityY, z: packet.velocityZ }
++    const notchVel = new Vec3(velocity.x, velocity.y, velocity.z)
+     entity.velocity.update(conv.fromNotchVelocity(notchVel))
+     entity.metadata = parseMetadata(packet.metadata, entity.metadata)
+ 
+@@ -281,7 +282,8 @@
+   bot._client.on('entity_velocity', (packet) => {
+     // entity velocity
+     const entity = fetchEntity(packet.entityId)
+-    const notchVel = new Vec3(packet.velocityX, packet.velocityY, packet.velocityZ)
++    const velocity = packet.velocity || { x: packet.velocityX, y: packet.velocityY, z: packet.velocityZ }
++    const notchVel = new Vec3(velocity.x, velocity.y, velocity.z)
+     entity.velocity.update(conv.fromNotchVelocity(notchVel))
+   })
+ 
+@@ -348,9 +350,9 @@
+   bot._client.on('sync_entity_position', (packet) => {
+     const entity = fetchEntity(packet.entityId)
+     entity.position.set(packet.x, packet.y, packet.z)
+-    entity.velocity.update(packet.dx, packet.dy, packet.dz)
+-    entity.yaw = packet.yaw
+-    entity.pitch = packet.pitch
++    entity.velocity.set(packet.dx, packet.dy, packet.dz)
++    entity.yaw = conv.fromNotchianYaw(packet.yaw)
++    entity.pitch = conv.fromNotchianPitch(packet.pitch)
+     bot.emit('entityMoved', entity)
+   })
+ 
+diff --git a/node_modules/mineflayer/lib/plugins/inventory.js b/node_modules/mineflayer/lib/plugins/inventory.js
+--- a/node_modules/mineflayer/lib/plugins/inventory.js
++++ b/node_modules/mineflayer/lib/plugins/inventory.js
+@@ -1,6 +1,6 @@
+ const assert = require('assert')
+ const { Vec3 } = require('vec3')
+-const { once, sleep, createDoneTask, createTask, withTimeout } = require('../promise_utils')
++const { once, sleep, createDoneTask, createTask, withTimeout, onceWithCleanup } = require('../promise_utils')
+ 
+ module.exports = inject
+ 
+@@ -22,6 +22,29 @@
+ ]
+ 
+ function inject (bot, { hideErrors }) {
++  function checkAction () { bot._checkActionCancellation?.() }
++  function waitForEvent (emitter, event, timeout = 20000, signal = bot._actionSignal) {
++    checkAction()
++    return onceWithCleanup(emitter, event, { timeout, signal }).then(value => { checkAction(); return value })
++  }
++  async function openWindow (activate) {
++    checkAction()
++    const parent = bot._actionSignal, controller = new AbortController()
++    const cancel = () => controller.abort(parent.reason)
++    if (parent?.aborted) cancel()
++    else parent?.addEventListener('abort', cancel, { once: true })
++    const pending = waitForEvent(bot, 'windowOpen', parent ? 5000 : 20000, controller.signal)
++    Promise.resolve().then(() => { checkAction(); return activate() }).catch(error => controller.abort(error))
++    try {
++      const [window] = await pending
++      checkAction()
++      extendWindow(window)
++      return window
++    } finally {
++      parent?.removeEventListener('abort', cancel)
++      controller.abort(new Error('Window request finished'))
++    }
++  }
+   const Item = require('prismarine-item')(bot.registry)
+   const windows = require('prismarine-windows')(bot.version)
+ 
+@@ -125,10 +148,15 @@
+         cursorZ: -1
+       })
+     } else if (bot.supportFeature('useItemWithOwnPacket')) {
++      const yawDeg = -bot.entity.yaw * 180 / Math.PI + 180 // invert + shift
++      const pitchDeg = -bot.entity.pitch * 180 / Math.PI // invert
+       bot._client.write('use_item', {
+         hand: offHand ? 1 : 0,
+         sequence,
+-        rotation: { x: 0, y: 0 }
++        rotation: {
++          x: yawDeg,
++          y: pitchDeg
++        }
+       })
+     }
+   }
+@@ -280,6 +308,7 @@
+     await transferOne()
+ 
+     async function transferOne () {
++      checkAction()
+       if (count === 0) {
+         await putSelectedItemRange(sourceStart, sourceEnd, window, firstSourceSlot)
+         return
+@@ -379,17 +408,11 @@
+   }
+ 
+   async function openBlock (block, direction, cursorPos) {
+-    bot.activateBlock(block, direction, cursorPos)
+-    const [window] = await once(bot, 'windowOpen')
+-    extendWindow(window)
+-    return window
++    return openWindow(() => bot.activateBlock(block, direction, cursorPos))
+   }
+ 
+   async function openEntity (entity) {
+-    bot.activateEntity(entity)
+-    const [window] = await once(bot, 'windowOpen')
+-    extendWindow(window)
+-    return window
++    return openWindow(() => bot.activateEntity(entity))
+   }
+ 
+   function createActionNumber () {
+@@ -447,20 +470,20 @@
+   async function waitForWindowUpdate (window, slot) {
+     if (window.type === 'minecraft:inventory') {
+       if (slot >= 1 && slot <= 4) {
+-        await once(bot.inventory, 'updateSlot:0')
++        await waitForEvent(bot.inventory, 'updateSlot:0')
+       }
+     } else if (window.type === 'minecraft:crafting') {
+       if (slot >= 1 && slot <= 9) {
+-        await once(bot.currentWindow, 'updateSlot:0')
++        await waitForEvent(bot.currentWindow, 'updateSlot:0')
+       }
+     } else if (window.type === 'minecraft:merchant') {
+       const toUpdate = []
+       if (slot <= 1 && !window.selectedTrade.tradeDisabled && expectTradeUpdate(window)) {
+-        toUpdate.push(once(bot.currentWindow, 'updateSlot:2'))
++        toUpdate.push(waitForEvent(bot.currentWindow, 'updateSlot:2'))
+       }
+       if (slot === 2) {
+         for (const item of bot.currentWindow.containerItems()) {
+-          toUpdate.push(once(bot.currentWindow, `updateSlot:${item.slot}`))
++          toUpdate.push(waitForEvent(bot.currentWindow, `updateSlot:${item.slot}`))
+         }
+       }
+       await Promise.all(toUpdate)
+@@ -468,7 +491,7 @@
+       if (slot === 2 && !window.selectedTrade.tradeDisabled && expectTradeUpdate(window)) {
+         // After the trade goes through, if the inputs are still satisfied,
+         // expect another update in slot 2
+-        await once(bot.currentWindow, 'updateSlot:2')
++        await waitForEvent(bot.currentWindow, 'updateSlot:2')
+       }
+     }
+   }
+@@ -537,6 +560,7 @@
+   }
+ 
+   async function clickWindow (slot, mouseButton, mode) {
++    checkAction()
+     // if you click on the quick bar and have dug recently,
+     // wait a bit
+     if (slot >= bot.QUICK_BAR_START && bot.lastDigTime != null) {
+@@ -545,6 +569,7 @@
+         await sleep(DIG_CLICK_TIMEOUT - timeSinceLastDig)
+       }
+     }
++    checkAction()
+     const window = bot.currentWindow || bot.inventory
+ 
+     assert.ok(mode >= 0 && mode <= 4)
+@@ -625,7 +650,7 @@
+     }
+ 
+     if (bot.supportFeature('transactionPacketExists')) {
+-      const response = once(bot, `confirmTransaction${actionId}`)
++      const response = waitForEvent(bot, `confirmTransaction${actionId}`)
+       if (!window.transactionRequiresConfirmation(click)) {
+         confirmTransaction(window.id, actionId, true)
+       }
+@@ -643,7 +668,7 @@
+ 
+   async function putAway (slot) {
+     const window = bot.currentWindow || bot.inventory
+-    const promisePutAway = once(window, `updateSlot:${slot}`)
++    const promisePutAway = waitForEvent(window, `updateSlot:${slot}`)
+     await clickWindow(slot, 0, 0)
+     const start = window.inventoryStart
+     const end = window.inventoryEnd
+diff --git a/node_modules/mineflayer/lib/plugins/place_block.js b/node_modules/mineflayer/lib/plugins/place_block.js
+--- a/node_modules/mineflayer/lib/plugins/place_block.js
++++ b/node_modules/mineflayer/lib/plugins/place_block.js
+@@ -11,7 +11,7 @@
+     let newBlock = bot.blockAt(dest)
+     if (oldBlock.type === newBlock.type) {
+       [oldBlock, newBlock] = await onceWithCleanup(bot, `blockUpdate:${dest}`, {
+-        timeout: 5000,
++        timeout: 500,
+         // Condition to wait to receive block update actually changing the block type, in case the bot receives block updates with no changes
+         // oldBlock and newBlock will both be null when the world unloads
+         checkCondition: (oldBlock, newBlock) => !oldBlock || !newBlock || oldBlock.type !== newBlock.type
+diff --git a/node_modules/mineflayer/lib/promise_utils.js b/node_modules/mineflayer/lib/promise_utils.js
+--- a/node_modules/mineflayer/lib/promise_utils.js
++++ b/node_modules/mineflayer/lib/promise_utils.js
+@@ -44,8 +44,10 @@
+  * @param [checkCondition] - A function which matches the same signature of an event emitter handler, and should return something truthy if you want the event to be handled. If this is not provided, all events are handled.
+  * @returns {Promise} A promise which will either resolve to an *array* of values in the handled event, or will reject on timeout if applicable. This may never resolve if no timeout is set and the event does not fire.
+  */
+-function onceWithCleanup (emitter, event, { timeout = 0, checkCondition = undefined } = {}) {
++function onceWithCleanup (emitter, event, { timeout = 0, checkCondition = undefined, signal } = {}) {
+   const task = createTask()
++  let timer
++  const onAbort = () => task.cancel(signal.reason || new Error('Operation cancelled'))
+ 
+   const onEvent = (...data) => {
+     if (typeof checkCondition === 'function' && !checkCondition(...data)) {
+@@ -56,18 +58,24 @@
+   }
+ 
+   emitter.addListener(event, onEvent)
++  if (signal?.aborted) onAbort()
++  else signal?.addEventListener('abort', onAbort, { once: true })
+ 
+   if (typeof timeout === 'number' && timeout > 0) {
+     // For some reason, the call stack gets lost if we don't create the error outside of the .then call
+     const timeoutError = new Error(`Event ${event} did not fire within timeout of ${timeout}ms`)
+-    sleep(timeout).then(() => {
++    timer = setTimeout(() => {
+       if (!task.done) {
+         task.cancel(timeoutError)
+       }
+-    })
++    }, timeout)
+   }
+ 
+-  task.promise.catch(() => {}).finally(() => emitter.removeListener(event, onEvent))
++  task.promise.catch(() => {}).finally(() => {
++    clearTimeout(timer)
++    emitter.removeListener(event, onEvent)
++    signal?.removeEventListener('abort', onAbort)
++  })
+ 
+   return task.promise
+ }

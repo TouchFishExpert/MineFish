@@ -1,0 +1,178 @@
+diff --git a/node_modules/mineflayer-collectblock/lib/CollectBlock.js b/node_modules/mineflayer-collectblock/lib/CollectBlock.js
+--- a/node_modules/mineflayer-collectblock/lib/CollectBlock.js
++++ b/node_modules/mineflayer-collectblock/lib/CollectBlock.js
+@@ -16,19 +16,61 @@ const Util_1 = require("./Util");
+ const Inventory_1 = require("./Inventory");
+ const BlockVeins_1 = require("./BlockVeins");
+ const Targets_1 = require("./Targets");
+-const events_1 = require("events");
+ const util_1 = require("util");
++// Cancellation must settle waits even when pathfinder has already reached the item.
++async function collectionStep(options, phase, work) {
++    const signal = options.controller.signal;
++    signal.throwIfAborted();
++    options.phase = phase;
++    console.log(`[CollectBlock] ${phase}`);
++    let abort;
++    try {
++        return await Promise.race([
++            Promise.resolve().then(() => { signal.throwIfAborted(); return work(); }),
++            new Promise((resolve, reject) => {
++                abort = () => reject(signal.reason);
++                signal.addEventListener('abort', abort, { once: true });
++            })
++        ]);
++    } finally {
++        signal.removeEventListener('abort', abort);
++    }
++}
++async function collectDroppedItem(bot, item, options) {
++    const events = new TemporarySubscriber_1.TemporarySubscriber(bot);
++    let pickedUp = !item.isValid, resolvePickup, timer;
++    const pickup = new Promise(resolve => { resolvePickup = resolve; });
++    const onPickup = entity => {
++        if (entity !== item) return;
++        pickedUp = true;
++        resolvePickup();
++    };
++    events.subscribeTo('entityGone', onPickup);
++    events.subscribeTo('playerCollect', (collector, entity) => onPickup(entity));
++    try {
++        if (!pickedUp) await collectionStep(options, 'navigate-item', () =>
++            bot.pathfinder.goto(new mineflayer_pathfinder_1.goals.GoalFollow(item, 0)));
++        if (!pickedUp && item.isValid) await collectionStep(options, 'pickup', () => Promise.race([
++            pickup,
++            new Promise((resolve, reject) => { timer = setTimeout(() => reject((0, Util_1.error)(
++                'ItemPickupTimeout', 'Block was broken, but its dropped item was not picked up.')), options.pickupTimeout); })
++        ]));
++    } finally {
++        clearTimeout(timer);
++        events.cleanup();
++    }
++}
+ function collectAll(bot, options) {
+     return __awaiter(this, void 0, void 0, function* () {
+         while (!options.targets.empty) {
+-            yield (0, Inventory_1.emptyInventoryIfFull)(bot, options.chestLocations, options.itemFilter);
++            yield collectionStep(options, 'inventory', () => (0, Inventory_1.emptyInventoryIfFull)(bot, options.chestLocations, options.itemFilter));
+             const closest = options.targets.getClosest();
+             if (closest == null)
+                 break;
+             switch (closest.constructor.name) {
+                 case 'Block': {
+                     const goal = new mineflayer_pathfinder_1.goals.GoalLookAtBlock(closest.position, bot.world);
+-                    yield bot.pathfinder.goto(goal);
++                    yield collectionStep(options, 'navigate-block', () => bot.pathfinder.goto(goal));
+                     yield mineBlock(bot, closest, options);
+                     // TODO: options.ignoreNoPath
+                     break;
+@@ -37,17 +79,7 @@ function collectAll(bot, options) {
+                     // Don't collect any entities that are marked as 'invalid'
+                     if (!closest.isValid)
+                         break;
+-                    const tempEvents = new TemporarySubscriber_1.TemporarySubscriber(bot);
+-                    const waitForPickup = new Promise(resolve => {
+-                        tempEvents.subscribeTo('entityGone', (entity) => {
+-                            if (entity === closest) {
+-                                tempEvents.cleanup();
+-                                resolve();
+-                            }
+-                        });
+-                    });
+-                    yield bot.pathfinder.goto(new mineflayer_pathfinder_1.goals.GoalFollow(closest, 0));
+-                    yield waitForPickup;
++                    yield collectDroppedItem(bot, closest, options);
+                     break;
+                 }
+                 default: {
+@@ -71,7 +103,7 @@ function mineBlock(bot, block, options) {
+             options.targets.removeTarget(block);
+             return;
+         }
+-        yield bot.tool.equipForBlock(block, equipToolOptions);
++        yield collectionStep(options, 'equip', () => bot.tool.equipForBlock(block, equipToolOptions));
+         if (bot.heldItem !== null && !block.canHarvest(bot.heldItem.type)) {
+             options.targets.removeTarget(block);
+             return;
+@@ -83,18 +115,12 @@ function mineBlock(bot, block, options) {
+             }
+         });
+         try {
+-            yield bot.dig(block);
++            yield collectionStep(options, 'dig', () => bot.dig(block));
+             // Waiting for items to drop
+-            yield new Promise(resolve => {
+-                let remainingTicks = 10;
+-                tempEvents.subscribeTo('physicsTick', () => {
+-                    remainingTicks--;
+-                    if (remainingTicks <= 0) {
+-                        tempEvents.cleanup();
+-                        resolve();
+-                    }
+-                });
+-            });
++            let timer;
++            try {
++                yield collectionStep(options, 'drop', () => new Promise(resolve => { timer = setTimeout(resolve, 500); }));
++            } finally { clearTimeout(timer); }
+         }
+         finally {
+             tempEvents.cleanup();
+@@ -177,6 +203,8 @@ class CollectBlock {
+             if (cb != null)
+                 return (0, util_1.callbackify)(this.collect)(target, options, cb);
+             const optionsFull = {
++                controller: new AbortController(),
++                pickupTimeout: options.pickupTimeout ?? 3000,
+                 append: (_a = options.append) !== null && _a !== void 0 ? _a : false,
+                 ignoreNoPath: (_b = options.ignoreNoPath) !== null && _b !== void 0 ? _b : false,
+                 chestLocations: (_c = options.chestLocations) !== null && _c !== void 0 ? _c : this.chestLocations,
+@@ -202,8 +230,12 @@ class CollectBlock {
+             else {
+                 this.targets.appendTarget(target);
+             }
++            if (optionsFull.append && this.activeCollection) return yield this.activeCollection.promise;
++            const active = { controller: optionsFull.controller };
++            this.activeCollection = active;
+             try {
+-                yield collectAll(this.bot, optionsFull);
++                active.promise = collectAll(this.bot, optionsFull);
++                yield active.promise;
+             }
+             catch (err) {
+                 this.targets.clear();
+@@ -213,6 +245,8 @@ class CollectBlock {
+                     throw err;
+             }
+             finally {
++                if (this.activeCollection === active) this.activeCollection = null;
++                this.targets.clear();
+                 // @ts-expect-error
+                 this.bot.emit('collectBlock_finished');
+             }
+@@ -237,17 +271,19 @@ class CollectBlock {
+      */
+     cancelTask(cb) {
+         return __awaiter(this, void 0, void 0, function* () {
+-            if (this.targets.empty) {
++            const active = this.activeCollection;
++            if (!active) {
+                 if (cb != null)
+                     cb();
+                 return yield Promise.resolve();
+             }
+-            this.bot.pathfinder.stop();
+-            if (cb != null) {
+-                // @ts-expect-error
+-                this.bot.once('collectBlock_finished', cb);
++            active.controller.abort((0, Util_1.error)('PathStopped', 'Collection cancelled.'));
++            this.bot.pathfinder.setGoal(null);
++            this.bot.stopDigging();
++            try { yield active.promise; } catch (err) {
++                if (err.name !== 'PathStopped') throw err;
+             }
+-            yield (0, events_1.once)(this.bot, 'collectBlock_finished');
++            if (cb != null) cb();
+         });
+     }
+ }

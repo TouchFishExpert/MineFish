@@ -1,0 +1,6 @@
+{
+  "loginCommand": "/login",
+  "password": "FILL_IN_SERVER_PASSWORD",
+  "expectedUsername": "bot",
+  "owner": "YOUR_PLAYER_NAME"
+}

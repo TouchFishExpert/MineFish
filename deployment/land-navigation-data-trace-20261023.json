@@ -1,0 +1,3886 @@
+{
+  "at": "2026-10-23T10:47:51.779Z",
+  "installed": {
+    "mineflayer": "4.33.0",
+    "pathfinder": "2.4.5",
+    "physics": "1.11.1",
+    "mcVersion": "1.21.6"
+  },
+  "sourceSha256": {
+    "lib/astar.js": "7801f0d1f8e884897a995b705e173ecec4fd03ad66d78de01201ea55104ba59c",
+    "lib/move.js": "cfb4bb2aa127385a52cc66f4896429bd4793df30d1279e2bef6bbdb1510ec7a3",
+    "lib/movements.js": "269aa0a3e3c060620f6963f22a2142f75e687cbab66aeca1d0dad4fee13e71a8",
+    "lib/physics.js": "0facdd741f6eab551a9d012f34d36c043181a743a6c855e19f72d8a482dec5fc",
+    "index.js": "f11d6d4eaab314213ff85751d57fdd23a22f9af98505efc2543d008ca47938c1"
+  },
+  "checksPassed": true,
+  "note": "Raw graph nodes before block-surface centering and execution. Minecraft-world fixtures are fabricated; algorithm output is real.",
+  "scenarios": [
+    {
+      "name": "flat",
+      "scope": "Synthetic local world with real Minecraft 1.21.6 block states and the installed Movements/AStar; no live movement.",
+      "scenarioOverrides": {},
+      "start": {
+        "x": 0,
+        "y": 64,
+        "z": 0,
+        "hash": "0,64,0",
+        "cost": 0,
+        "remainingBlocks": 6,
+        "toBreak": [],
+        "toPlace": [],
+        "parkour": false
+      },
+      "goal": {
+        "type": "GoalBlock",
+        "x": 4,
+        "y": 64,
+        "z": 0
+      },
+      "settings": {
+        "canDig": false,
+        "placeCost": 2,
+        "digCost": 10,
+        "allow1by1towers": true,
+        "allowParkour": true,
+        "allowSprinting": true,
+        "maxDropDown": 4,
+        "infiniteLiquidDropdownDistance": true,
+        "searchRadius": -1,
+        "tickBudgetMs": 40,
+        "searchBudgetMs": 5000
+      },
+      "map": [
+        "S...G"
+      ],
+      "worldSamples": [
+        {
+          "x": 1,
+          "y": 63,
+          "z": 0,
+          "name": "stone",
+          "stateId": 1,
+          "boundingBox": "block",
+          "shapes": [
+            [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ]
+          ],
+          "safe": false,
+          "physical": true,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "name": "air",
+          "stateId": 0,
+          "boundingBox": "empty",
+          "shapes": [],
+          "safe": true,
+          "physical": false,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "name": "air",
+          "stateId": 0,
+          "boundingBox": "empty",
+          "shapes": [],
+          "safe": true,
+          "physical": false,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        }
+      ],
+      "status": "success",
+      "totalCost": 4,
+      "visitedNodes": 4,
+      "generatedNodes": 31,
+      "queriedBlockCoordinates": 124,
+      "slices": [
+        {
+          "status": "success",
+          "timeMs": 2.116000000000014
+        }
+      ],
+      "rawPath": [
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "hash": "2,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 0,
+          "hash": "3,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        }
+      ],
+      "popSequence": [
+        {
+          "x": 0,
+          "y": 64,
+          "z": 0,
+          "hash": "0,64,0",
+          "cost": 0,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 0,
+          "h": 4,
+          "f": 4,
+          "parent": null
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 1,
+          "h": 3,
+          "f": 4,
+          "parent": {
+            "x": 0,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "hash": "2,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 2,
+          "h": 2,
+          "f": 4,
+          "parent": {
+            "x": 1,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 0,
+          "hash": "3,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 3,
+          "h": 1,
+          "f": 4,
+          "parent": {
+            "x": 2,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 4,
+          "h": 0,
+          "f": 4,
+          "parent": {
+            "x": 3,
+            "y": 64,
+            "z": 0
+          }
+        }
+      ],
+      "expanded": [
+        {
+          "from": {
+            "x": 0,
+            "y": 64,
+            "z": 0,
+            "hash": "0,64,0",
+            "cost": 0,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": -1,
+              "y": 64,
+              "z": 0,
+              "hash": "-1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": -1,
+              "y": 65,
+              "z": 0,
+              "hash": "-1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": -1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": -1,
+              "hash": "0,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": -1,
+              "hash": "0,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": 1,
+              "hash": "0,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 1,
+              "hash": "0,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": -1,
+              "y": 64,
+              "z": -1,
+              "hash": "-1,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": -1,
+              "y": 64,
+              "z": 1,
+              "hash": "-1,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": -1,
+              "hash": "1,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 1,
+              "hash": "1,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 1,
+            "y": 64,
+            "z": 0,
+            "hash": "1,64,0",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 0,
+              "y": 64,
+              "z": 0,
+              "hash": "0,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 0,
+              "hash": "2,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": -1,
+              "hash": "1,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": -1,
+              "hash": "1,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 1,
+              "hash": "1,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 1,
+              "hash": "1,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": -1,
+              "hash": "0,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": 1,
+              "hash": "0,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": -1,
+              "hash": "2,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 1,
+              "hash": "2,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 2,
+            "y": 64,
+            "z": 0,
+            "hash": "2,64,0",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 0,
+              "hash": "3,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 0,
+              "hash": "3,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": -1,
+              "hash": "2,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": -1,
+              "hash": "2,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 1,
+              "hash": "2,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 1,
+              "hash": "2,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": -1,
+              "hash": "1,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 1,
+              "hash": "1,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": -1,
+              "hash": "3,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 1,
+              "hash": "3,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 3,
+            "y": 64,
+            "z": 0,
+            "hash": "3,64,0",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 2,
+              "y": 64,
+              "z": 0,
+              "hash": "2,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": 0,
+              "hash": "4,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 65,
+              "z": 0,
+              "hash": "4,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 4,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": -1,
+              "hash": "3,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": -1,
+              "hash": "3,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 1,
+              "hash": "3,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 1,
+              "hash": "3,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": -1,
+              "hash": "2,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 1,
+              "hash": "2,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": -1,
+              "hash": "4,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": 1,
+              "hash": "4,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 0,
+              "hash": "3,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "two-block-high-obstacle",
+      "scope": "Synthetic local world with real Minecraft 1.21.6 block states and the installed Movements/AStar; no live movement.",
+      "scenarioOverrides": {},
+      "start": {
+        "x": 0,
+        "y": 64,
+        "z": 0,
+        "hash": "0,64,0",
+        "cost": 0,
+        "remainingBlocks": 6,
+        "toBreak": [],
+        "toPlace": [],
+        "parkour": false
+      },
+      "goal": {
+        "type": "GoalBlock",
+        "x": 4,
+        "y": 64,
+        "z": 0
+      },
+      "settings": {
+        "canDig": false,
+        "placeCost": 2,
+        "digCost": 10,
+        "allow1by1towers": true,
+        "allowParkour": true,
+        "allowSprinting": true,
+        "maxDropDown": 4,
+        "infiniteLiquidDropdownDistance": true,
+        "searchRadius": -1,
+        "tickBudgetMs": 40,
+        "searchBudgetMs": 5000
+      },
+      "map": [
+        ".....",
+        ".....",
+        "S.#.G",
+        ".....",
+        "....."
+      ],
+      "worldSamples": [
+        {
+          "x": 1,
+          "y": 63,
+          "z": 0,
+          "name": "stone",
+          "stateId": 1,
+          "boundingBox": "block",
+          "shapes": [
+            [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ]
+          ],
+          "safe": false,
+          "physical": true,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "name": "air",
+          "stateId": 0,
+          "boundingBox": "empty",
+          "shapes": [],
+          "safe": true,
+          "physical": false,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "name": "stone",
+          "stateId": 1,
+          "boundingBox": "block",
+          "shapes": [
+            [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ]
+          ],
+          "safe": false,
+          "physical": true,
+          "liquid": false,
+          "climbable": false,
+          "height": 65,
+          "openable": false
+        }
+      ],
+      "status": "success",
+      "totalCost": 4.82842712474619,
+      "visitedNodes": 7,
+      "generatedNodes": 42,
+      "queriedBlockCoordinates": 173,
+      "slices": [
+        {
+          "status": "success",
+          "timeMs": 1.060699999999997
+        }
+      ],
+      "rawPath": [
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 1,
+          "hash": "2,64,1",
+          "cost": 1.4142135623730951,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 1,
+          "hash": "3,64,1",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1.4142135623730951,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        }
+      ],
+      "popSequence": [
+        {
+          "x": 0,
+          "y": 64,
+          "z": 0,
+          "hash": "0,64,0",
+          "cost": 0,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 0,
+          "h": 4,
+          "f": 4,
+          "parent": null
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 1,
+          "h": 3,
+          "f": 4,
+          "parent": {
+            "x": 0,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": -1,
+          "hash": "1,64,-1",
+          "cost": 1.4142135623730951,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 1.4142135623730951,
+          "h": 3.414213562373095,
+          "f": 4.82842712474619,
+          "parent": {
+            "x": 0,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 1,
+          "hash": "2,64,1",
+          "cost": 1.4142135623730951,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 2.414213562373095,
+          "h": 2.414213562373095,
+          "f": 4.82842712474619,
+          "parent": {
+            "x": 1,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 1,
+          "hash": "1,64,1",
+          "cost": 1.4142135623730951,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 1.4142135623730951,
+          "h": 3.414213562373095,
+          "f": 4.82842712474619,
+          "parent": {
+            "x": 0,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 1,
+          "hash": "3,64,1",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 3.414213562373095,
+          "h": 1.4142135623730951,
+          "f": 4.82842712474619,
+          "parent": {
+            "x": 2,
+            "y": 64,
+            "z": 1
+          }
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": -1,
+          "hash": "2,64,-1",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 2.414213562373095,
+          "h": 2.414213562373095,
+          "f": 4.82842712474619,
+          "parent": {
+            "x": 1,
+            "y": 64,
+            "z": -1
+          }
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1.4142135623730951,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 4.82842712474619,
+          "h": 0,
+          "f": 4.82842712474619,
+          "parent": {
+            "x": 3,
+            "y": 64,
+            "z": 1
+          }
+        }
+      ],
+      "expanded": [
+        {
+          "from": {
+            "x": 0,
+            "y": 64,
+            "z": 0,
+            "hash": "0,64,0",
+            "cost": 0,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": -1,
+              "y": 64,
+              "z": 0,
+              "hash": "-1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": -1,
+              "y": 65,
+              "z": 0,
+              "hash": "-1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": -1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": -1,
+              "hash": "0,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": -1,
+              "hash": "0,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": 1,
+              "hash": "0,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 1,
+              "hash": "0,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": -1,
+              "y": 64,
+              "z": -1,
+              "hash": "-1,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": -1,
+              "y": 64,
+              "z": 1,
+              "hash": "-1,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": -1,
+              "hash": "1,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 1,
+              "hash": "1,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 1,
+            "y": 64,
+            "z": 0,
+            "hash": "1,64,0",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 0,
+              "y": 64,
+              "z": 0,
+              "hash": "0,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": -1,
+              "hash": "1,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": -1,
+              "hash": "1,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 1,
+              "hash": "1,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 1,
+              "hash": "1,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": -1,
+              "hash": "0,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": 1,
+              "hash": "0,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": -1,
+              "hash": "2,64,-1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 1,
+              "hash": "2,64,1",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 1,
+            "y": 64,
+            "z": -1,
+            "hash": "1,64,-1",
+            "cost": 1.4142135623730951,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 0,
+              "y": 64,
+              "z": -1,
+              "hash": "0,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": -1,
+              "hash": "0,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": -1,
+              "hash": "2,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": -1,
+              "hash": "2,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": -2,
+              "hash": "1,64,-2",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": -2,
+              "hash": "1,65,-2",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": -2,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": -2,
+              "hash": "0,64,-2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": 0,
+              "hash": "0,64,0",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": -2,
+              "hash": "2,64,-2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": -1,
+              "hash": "1,65,-1",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 2,
+            "y": 64,
+            "z": 1,
+            "hash": "2,64,1",
+            "cost": 1.4142135623730951,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 1,
+              "y": 64,
+              "z": 1,
+              "hash": "1,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 1,
+              "hash": "1,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 1,
+              "hash": "3,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 1,
+              "hash": "3,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 2,
+              "hash": "2,64,2",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 2,
+              "hash": "2,65,2",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 2,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 2,
+              "hash": "1,64,2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 0,
+              "hash": "3,64,0",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 2,
+              "hash": "3,64,2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 1,
+              "hash": "2,65,1",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 1,
+            "y": 64,
+            "z": 1,
+            "hash": "1,64,1",
+            "cost": 1.4142135623730951,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 0,
+              "y": 64,
+              "z": 1,
+              "hash": "0,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 1,
+              "hash": "0,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 1,
+              "hash": "2,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 1,
+              "hash": "2,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 2,
+              "hash": "1,64,2",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 2,
+              "hash": "1,65,2",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 2,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": 0,
+              "hash": "0,64,0",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "z": 2,
+              "hash": "0,64,2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 2,
+              "hash": "2,64,2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 1,
+              "hash": "1,65,1",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 3,
+            "y": 64,
+            "z": 1,
+            "hash": "3,64,1",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 2,
+              "y": 64,
+              "z": 1,
+              "hash": "2,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 1,
+              "hash": "2,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": 1,
+              "hash": "4,64,1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 65,
+              "z": 1,
+              "hash": "4,65,1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 4,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 0,
+              "hash": "3,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 0,
+              "hash": "3,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 2,
+              "hash": "3,64,2",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 2,
+              "hash": "3,65,2",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 2,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 2,
+              "hash": "2,64,2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": 0,
+              "hash": "4,64,0",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": 2,
+              "hash": "4,64,2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 1,
+              "hash": "3,65,1",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 2,
+            "y": 64,
+            "z": -1,
+            "hash": "2,64,-1",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 1,
+              "y": 64,
+              "z": -1,
+              "hash": "1,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": -1,
+              "hash": "1,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": -1,
+              "hash": "3,64,-1",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": -1,
+              "hash": "3,65,-1",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": -2,
+              "hash": "2,64,-2",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": -2,
+              "hash": "2,65,-2",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": -2,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": -2,
+              "hash": "1,64,-2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": -2,
+              "hash": "3,64,-2",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 0,
+              "hash": "3,64,0",
+              "cost": 1.4142135623730951,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": -1,
+              "hash": "2,65,-1",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": -1,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "one-block-gap-normal-parkour",
+      "scope": "Synthetic local world with real Minecraft 1.21.6 block states and the installed Movements/AStar; no live movement.",
+      "scenarioOverrides": {},
+      "start": {
+        "x": 0,
+        "y": 64,
+        "z": 0,
+        "hash": "0,64,0",
+        "cost": 0,
+        "remainingBlocks": 6,
+        "toBreak": [],
+        "toPlace": [],
+        "parkour": false
+      },
+      "goal": {
+        "type": "GoalBlock",
+        "x": 4,
+        "y": 64,
+        "z": 0
+      },
+      "settings": {
+        "canDig": false,
+        "placeCost": 2,
+        "digCost": 10,
+        "allow1by1towers": true,
+        "allowParkour": true,
+        "allowSprinting": true,
+        "maxDropDown": 4,
+        "infiniteLiquidDropdownDistance": true,
+        "searchRadius": -1,
+        "tickBudgetMs": 40,
+        "searchBudgetMs": 5000
+      },
+      "map": [
+        "S._.G (floor gap at x=2)"
+      ],
+      "worldSamples": [
+        {
+          "x": 1,
+          "y": 63,
+          "z": 0,
+          "name": "stone",
+          "stateId": 1,
+          "boundingBox": "block",
+          "shapes": [
+            [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ]
+          ],
+          "safe": false,
+          "physical": true,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "name": "air",
+          "stateId": 0,
+          "boundingBox": "empty",
+          "shapes": [],
+          "safe": true,
+          "physical": false,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "name": "air",
+          "stateId": 0,
+          "boundingBox": "empty",
+          "shapes": [],
+          "safe": true,
+          "physical": false,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        }
+      ],
+      "status": "success",
+      "totalCost": 3,
+      "visitedNodes": 3,
+      "generatedNodes": 9,
+      "queriedBlockCoordinates": 81,
+      "slices": [
+        {
+          "status": "success",
+          "timeMs": 0.3897000000000048
+        }
+      ],
+      "rawPath": [
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 0,
+          "hash": "3,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": true
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        }
+      ],
+      "popSequence": [
+        {
+          "x": 0,
+          "y": 64,
+          "z": 0,
+          "hash": "0,64,0",
+          "cost": 0,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 0,
+          "h": 4,
+          "f": 4,
+          "parent": null
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 1,
+          "h": 3,
+          "f": 4,
+          "parent": {
+            "x": 0,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 0,
+          "hash": "3,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": true,
+          "g": 2,
+          "h": 1,
+          "f": 3,
+          "parent": {
+            "x": 1,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 3,
+          "h": 0,
+          "f": 3,
+          "parent": {
+            "x": 3,
+            "y": 64,
+            "z": 0
+          }
+        }
+      ],
+      "expanded": [
+        {
+          "from": {
+            "x": 0,
+            "y": 64,
+            "z": 0,
+            "hash": "0,64,0",
+            "cost": 0,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 1,
+            "y": 64,
+            "z": 0,
+            "hash": "1,64,0",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 0,
+              "y": 64,
+              "z": 0,
+              "hash": "0,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 0,
+              "hash": "2,64,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 1,
+                  "dy": 0,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 6,
+              "remainingBlocks": 4,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 1,
+                  "dy": 0,
+                  "dz": 0,
+                  "returnPos": {
+                    "x": 1,
+                    "y": 64,
+                    "z": 0
+                  }
+                },
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 0,
+              "hash": "3,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": true
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 3,
+            "y": 64,
+            "z": 0,
+            "hash": "3,64,0",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": true
+          },
+          "neighbors": [
+            {
+              "x": 2,
+              "y": 64,
+              "z": 0,
+              "hash": "2,64,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": -1,
+                  "dy": 0,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 6,
+              "remainingBlocks": 4,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": -1,
+                  "dy": 0,
+                  "dz": 0,
+                  "returnPos": {
+                    "x": 3,
+                    "y": 64,
+                    "z": 0
+                  }
+                },
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": true
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": 0,
+              "hash": "4,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 65,
+              "z": 0,
+              "hash": "4,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 4,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 0,
+              "hash": "3,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "one-block-gap-placement-isolated",
+      "scope": "Synthetic local world with real Minecraft 1.21.6 block states and the installed Movements/AStar; no live movement.",
+      "scenarioOverrides": {
+        "allowParkour": false,
+        "reason": "Isolate block placement instead of the normal parkour alternative."
+      },
+      "start": {
+        "x": 0,
+        "y": 64,
+        "z": 0,
+        "hash": "0,64,0",
+        "cost": 0,
+        "remainingBlocks": 6,
+        "toBreak": [],
+        "toPlace": [],
+        "parkour": false
+      },
+      "goal": {
+        "type": "GoalBlock",
+        "x": 4,
+        "y": 64,
+        "z": 0
+      },
+      "settings": {
+        "canDig": false,
+        "placeCost": 2,
+        "digCost": 10,
+        "allow1by1towers": true,
+        "allowParkour": false,
+        "allowSprinting": true,
+        "maxDropDown": 4,
+        "infiniteLiquidDropdownDistance": true,
+        "searchRadius": -1,
+        "tickBudgetMs": 40,
+        "searchBudgetMs": 5000
+      },
+      "map": [
+        "S._.G (floor gap at x=2)"
+      ],
+      "worldSamples": [
+        {
+          "x": 1,
+          "y": 63,
+          "z": 0,
+          "name": "stone",
+          "stateId": 1,
+          "boundingBox": "block",
+          "shapes": [
+            [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ]
+          ],
+          "safe": false,
+          "physical": true,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "name": "air",
+          "stateId": 0,
+          "boundingBox": "empty",
+          "shapes": [],
+          "safe": true,
+          "physical": false,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "name": "air",
+          "stateId": 0,
+          "boundingBox": "empty",
+          "shapes": [],
+          "safe": true,
+          "physical": false,
+          "liquid": false,
+          "climbable": false,
+          "height": 64,
+          "openable": false
+        }
+      ],
+      "status": "success",
+      "totalCost": 6,
+      "visitedNodes": 4,
+      "generatedNodes": 9,
+      "queriedBlockCoordinates": 89,
+      "slices": [
+        {
+          "status": "success",
+          "timeMs": 0.3766999999999996
+        }
+      ],
+      "rawPath": [
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "hash": "2,64,0",
+          "cost": 3,
+          "remainingBlocks": 5,
+          "toBreak": [],
+          "toPlace": [
+            {
+              "x": 1,
+              "y": 63,
+              "z": 0,
+              "dx": 1,
+              "dy": 0,
+              "dz": 0
+            }
+          ],
+          "parkour": false
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 0,
+          "hash": "3,64,0",
+          "cost": 1,
+          "remainingBlocks": 5,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1,
+          "remainingBlocks": 5,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false
+        }
+      ],
+      "popSequence": [
+        {
+          "x": 0,
+          "y": 64,
+          "z": 0,
+          "hash": "0,64,0",
+          "cost": 0,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 0,
+          "h": 4,
+          "f": 4,
+          "parent": null
+        },
+        {
+          "x": 1,
+          "y": 64,
+          "z": 0,
+          "hash": "1,64,0",
+          "cost": 1,
+          "remainingBlocks": 6,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 1,
+          "h": 3,
+          "f": 4,
+          "parent": {
+            "x": 0,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 2,
+          "y": 64,
+          "z": 0,
+          "hash": "2,64,0",
+          "cost": 3,
+          "remainingBlocks": 5,
+          "toBreak": [],
+          "toPlace": [
+            {
+              "x": 1,
+              "y": 63,
+              "z": 0,
+              "dx": 1,
+              "dy": 0,
+              "dz": 0
+            }
+          ],
+          "parkour": false,
+          "g": 4,
+          "h": 2,
+          "f": 6,
+          "parent": {
+            "x": 1,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 3,
+          "y": 64,
+          "z": 0,
+          "hash": "3,64,0",
+          "cost": 1,
+          "remainingBlocks": 5,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 5,
+          "h": 1,
+          "f": 6,
+          "parent": {
+            "x": 2,
+            "y": 64,
+            "z": 0
+          }
+        },
+        {
+          "x": 4,
+          "y": 64,
+          "z": 0,
+          "hash": "4,64,0",
+          "cost": 1,
+          "remainingBlocks": 5,
+          "toBreak": [],
+          "toPlace": [],
+          "parkour": false,
+          "g": 6,
+          "h": 0,
+          "f": 6,
+          "parent": {
+            "x": 3,
+            "y": 64,
+            "z": 0
+          }
+        }
+      ],
+      "expanded": [
+        {
+          "from": {
+            "x": 0,
+            "y": 64,
+            "z": 0,
+            "hash": "0,64,0",
+            "cost": 0,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 1,
+            "y": 64,
+            "z": 0,
+            "hash": "1,64,0",
+            "cost": 1,
+            "remainingBlocks": 6,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 0,
+              "y": 64,
+              "z": 0,
+              "hash": "0,64,0",
+              "cost": 1,
+              "remainingBlocks": 6,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 0,
+              "y": 65,
+              "z": 0,
+              "hash": "0,65,0",
+              "cost": 4,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 0,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 64,
+              "z": 0,
+              "hash": "2,64,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 1,
+                  "dy": 0,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 6,
+              "remainingBlocks": 4,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 1,
+                  "dy": 0,
+                  "dz": 0,
+                  "returnPos": {
+                    "x": 1,
+                    "y": 64,
+                    "z": 0
+                  }
+                },
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 1,
+              "y": 65,
+              "z": 0,
+              "hash": "1,65,0",
+              "cost": 3,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 1,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 2,
+            "y": 64,
+            "z": 0,
+            "hash": "2,64,0",
+            "cost": 3,
+            "remainingBlocks": 5,
+            "toBreak": [],
+            "toPlace": [
+              {
+                "x": 1,
+                "y": 63,
+                "z": 0,
+                "dx": 1,
+                "dy": 0,
+                "dz": 0
+              }
+            ],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 1,
+              "y": 64,
+              "z": 0,
+              "hash": "1,64,0",
+              "cost": 1,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 64,
+              "z": 0,
+              "hash": "3,64,0",
+              "cost": 1,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 3,
+              "remainingBlocks": 4,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        },
+        {
+          "from": {
+            "x": 3,
+            "y": 64,
+            "z": 0,
+            "hash": "3,64,0",
+            "cost": 1,
+            "remainingBlocks": 5,
+            "toBreak": [],
+            "toPlace": [],
+            "parkour": false
+          },
+          "neighbors": [
+            {
+              "x": 2,
+              "y": 64,
+              "z": 0,
+              "hash": "2,64,0",
+              "cost": 3,
+              "remainingBlocks": 4,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": -1,
+                  "dy": 0,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 2,
+              "y": 65,
+              "z": 0,
+              "hash": "2,65,0",
+              "cost": 6,
+              "remainingBlocks": 3,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": -1,
+                  "dy": 0,
+                  "dz": 0,
+                  "returnPos": {
+                    "x": 3,
+                    "y": 64,
+                    "z": 0
+                  }
+                },
+                {
+                  "x": 2,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 64,
+              "z": 0,
+              "hash": "4,64,0",
+              "cost": 1,
+              "remainingBlocks": 5,
+              "toBreak": [],
+              "toPlace": [],
+              "parkour": false
+            },
+            {
+              "x": 4,
+              "y": 65,
+              "z": 0,
+              "hash": "4,65,0",
+              "cost": 4,
+              "remainingBlocks": 4,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 4,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0
+                }
+              ],
+              "parkour": false
+            },
+            {
+              "x": 3,
+              "y": 65,
+              "z": 0,
+              "hash": "3,65,0",
+              "cost": 3,
+              "remainingBlocks": 4,
+              "toBreak": [],
+              "toPlace": [
+                {
+                  "x": 3,
+                  "y": 63,
+                  "z": 0,
+                  "dx": 0,
+                  "dy": 1,
+                  "dz": 0,
+                  "jump": true
+                }
+              ],
+              "parkour": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

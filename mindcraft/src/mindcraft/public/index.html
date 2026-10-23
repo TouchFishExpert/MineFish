@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mindcraft 中文控制台</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/zh-cn.js"></script>
+    <link rel="stylesheet" href="/inspection-panel.css">
+    <link rel="stylesheet" href="/console-logs.css">
+    <style>
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        #agents {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #ffffff;
+        }
+        .agent {
+            margin: 10px 0;
+            padding: 10px;
+            background: #363636;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .restart-btn, .start-btn, .stop-btn {
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .restart-btn {
+            background: #4CAF50;
+        }
+        .start-btn {
+            background: #2196F3;
+        }
+        .stop-btn {
+            background: #f44336;
+        }
+        .restart-btn:hover { background: #45a049; }
+        .start-btn:hover { background: #1976D2; }
+        .stop-btn:hover { background: #d32f2f; }
+        .gear-btn {
+            background: #505050;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            cursor: pointer;
+            margin-left: 6px;
+            font-size: 0.9em;
+        }
+        .gear-btn:hover { background: #5a5a5a; }
+        .status-icon {
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        .status-icon.online {
+            color: #4CAF50;
+        }
+        .status-icon.offline {
+            color: #f44336;
+        }
+        #settingsForm {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .setting-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #3a3a3a;
+            padding: 6px 8px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
+        }
+        .setting-wrapper label {
+            flex: 0 0 50%;
+            font-size: 0.9em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+        }
+        .setting-wrapper input[type="text"],
+        .setting-wrapper input[type="number"] {
+            flex: 1 1 0;
+            background: #262626;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            border-radius: 4px;
+            padding: 4px 6px;
+            max-width: 100%;
+            min-width: 0;
+        }
+        .setting-wrapper input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+        .agent-view-container {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+        }
+        .agent-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        .last-message {
+            font-style: italic;
+            color: #aaa;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+        .start-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .agent-view-container {
+            margin-top: 6px;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+            gap: 8px;
+            width: 100%;
+            align-items: start;
+        }
+        .agent-grid .cell {
+            min-width: 0;
+            overflow-wrap: anywhere;
+            background: #3a3a3a;
+            padding: 6px 8px;
+            border-radius: 4px;
+        }
+        .agent-grid .cell.title {
+            background: transparent;
+            padding: 0;
+        }
+        .agent-inventory {
+            margin-top: 8px;
+            background: #2f2f2f;
+            border-radius: 6px;
+            padding: 8px;
+        }
+        .agent-inventory h3 { margin: 0 0 6px 0; font-size: 1em; }
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+            gap: 6px;
+        }
+        /* Inventory item visuals */
+        .inventory-grid.empty {
+            display: grid;
+            grid-template-columns: 1fr;
+            color: #999;
+        }
+        .inv-item {
+            position: relative;
+            display: grid;
+            grid-template-rows: auto auto;
+            justify-items: center;
+            align-items: center;
+            gap: 4px;
+            background: #2f2f2f;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .inv-img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        .inv-count {
+            position: absolute;
+            right: 6px;
+            bottom: 6px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            font-size: 0.8em;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        .inv-name {
+            font-size: 0.85em;
+            color: #ccc;
+            text-align: center;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        /* Armor icons */
+        .armor-grid {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+        .armor-slot {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: #2f2f2f;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .armor-slot.empty { opacity: 0.4; }
+        .armor-placeholder { color: #888; font-size: 0.9em; }
+        .agent-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 6px;
+            width: 100%;
+        }
+        .controls-row {
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: auto minmax(100px, 1fr) repeat(5, auto);
+            gap: 8px;
+            align-items: center;
+        }
+        .msg-input {
+            width: calc(100% - 8px);
+            background: #262626;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            border-radius: 4px;
+            padding: 4px 6px;
+        }
+        .neutral-btn {
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+            background: #505050;
+        }
+        .neutral-btn:hover { background: #5a5a5a; }
+        .neutral-btn:disabled {
+            background: #383838;
+            color: #666;
+            cursor: not-allowed;
+        }
+        .msg-input:disabled {
+            background: #1a1a1a;
+            color: #666;
+            cursor: not-allowed;
+        }
+        .page-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #2d2d2d;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+        }
+        body {
+            padding-bottom: 80px;  /* Make room for footer */
+        }
+        .agent-stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 6px 0;
+            font-size: 0.9em;
+            color: #cccccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .agent-stats-row .stat {
+            background: #3a3a3a;
+            padding: 6px 8px;
+            border-radius: 4px;
+        }
+        .status-badge {
+            font-size: 0.75em;
+            margin-left: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #3a3a3a;
+            color: #cccccc;
+            text-transform: lowercase;
+        }
+        .status-badge.online { color: #4CAF50; }
+        .status-badge.offline { color: #f44336; }
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .title-spacer { flex: 1; }
+        /* Modal styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #2d2d2d;
+            border-radius: 8px;
+            width: 80vw;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        .modal-close-btn {
+            background: #f44336;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+        }
+        .modal-body {
+            flex: 1 1 auto;
+            overflow: auto;
+            padding: 12px 16px;
+        }
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-top: 1px solid #3a3a3a;
+        }
+        .footer-left { color: #cccccc; font-style: italic; }
+        @media (max-width: 900px) {
+            .title-left { flex-wrap: wrap; }
+            .status-badge { white-space: nowrap; margin-left: 0; }
+            .controls-row { display: flex; flex-wrap: wrap; }
+            .controls-row .msg-input { order: -1; flex: 1 1 100%; width: 100%; box-sizing: border-box; }
+            .controls-row button { flex: 1 1 auto; margin-left: 0; white-space: nowrap; }
+            .page-footer { flex-wrap: wrap; gap: 8px; padding: 10px; }
+            .page-footer > div { display: flex; flex-wrap: wrap; gap: 8px; }
+            .page-footer button { margin-left: 0; white-space: nowrap; }
+            body { padding-bottom: 150px; }
+            .modal { width: calc(100vw - 16px); height: 90vh; }
+            .modal-footer { flex-wrap: wrap; gap: 10px; }
+            .footer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-row">
+        <div class="title-left">
+            <h1 style="margin: 0;">Mindcraft</h1>
+            <span id="msStatus" class="status-badge offline">管理服务未连接</span>
+        </div>
+        <div class="title-spacer"></div>
+    </div>
+    <div id="agents"></div>
+
+    <div class="page-footer">
+        <div>
+            <button id="openCreateAgentBtn" class="start-btn">新增机器人</button>
+        </div>
+        <div style="display:flex; gap:12px;">
+            <button class="stop-btn" onclick="disconnectAllAgents()">断开所有机器人</button>
+            <button class="stop-btn" onclick="confirmShutdown()">关闭管理服务</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="createAgentModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="margin:0;">创建机器人</h2>
+                <button id="closeCreateAgentBtn" class="modal-close-btn">关闭</button>
+            </div>
+            <div class="modal-body">
+                <div id="createAgentSection">
+                    <div id="profileStatus" style="margin:6px 0;">角色配置：未上传</div>
+                    <div id="settingsForm"></div>
+                    <div id="createError" style="color:#f44336;margin-top:10px;"></div>
+                    <input type="file" id="profileFileInput" accept=".json,application/json" style="display:none">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="footer-left" id="footerStatus">填写设置、上传角色配置后，即可创建机器人。</div>
+                <div class="footer-actions">
+                    <button id="uploadProfileBtn" class="start-btn">上传角色配置</button>
+                    <button id="submitCreateAgentBtn" class="start-btn" disabled>创建机器人</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 机器人设置 Modal -->
+    <div id="agentSettingsModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="agentSettingsTitle" style="margin:0;">机器人设置</h2>
+                <button id="closeAgentSettingsBtn" class="modal-close-btn">关闭</button>
+            </div>
+            <div class="modal-body">
+                <div id="agentSettingsSection">
+                    <div id="agentSettingsForm"></div>
+                    <div id="agentSettingsError" style="color:#f44336;margin-top:10px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="footer-left" id="agentSettingsFooter">修改设置后，点击“应用并重启”使设置生效。</div>
+                <div class="footer-actions">
+                    <button id="discardAgentSettingsBtn" class="stop-btn" style="background:#777;">撤销更改</button>
+                    <button id="applyAgentSettingsBtn" class="start-btn" disabled>应用并重启</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io({ path: window.location.pathname + 'socket.io' })
+        const agentsDiv = document.getElementById('agents');
+        let settingsSpec = {};
+        let profileData = null;
+        const agentSettings = {};
+        const agentLastMessage = {};
+        const inventoryOpen = {};
+        let currentAgents = [];
+
+        // Item texture helpers (use PrismarineJS minecraft-assets CDN with graceful fallbacks)
+        const BASE_ICON_VERSION_CANDIDATES = ['1.21.8'];
+        const PATH_CANDIDATES = ['items', 'blocks'];
+        function buildVersionCandidatesForAgent(agentName) {
+            const preferred = (agentSettings[agentName] && agentSettings[agentName].minecraft_version && agentSettings[agentName].minecraft_version !== 'auto')
+                ? [String(agentSettings[agentName].minecraft_version)]
+                : [];
+            const merged = [...preferred, ...BASE_ICON_VERSION_CANDIDATES];
+            // de-duplicate while preserving order
+            const seen = new Set();
+            const uniq = [];
+            for (const v of merged) { if (!seen.has(v)) { seen.add(v); uniq.push(v); } }
+            return uniq;
+        }
+        function getItemIconUrl(itemName, vers, pathType) {
+            return `https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/${vers}/${pathType}/${itemName}.png`;
+        }
+        function buildIconUrlCandidates(itemName, agentName) {
+            // Prefer local proxy that resolves items vs blocks using minecraft-assets
+            const proxiedFirst = [`/assets/item/${agentName}/${itemName}.png`];
+            const versList = buildVersionCandidatesForAgent(agentName);
+            const urls = [...proxiedFirst];
+            for (const vers of versList) {
+                for (const p of PATH_CANDIDATES) {
+                    urls.push(getItemIconUrl(itemName, vers, p));
+                }
+            }
+            return urls;
+        }
+        function fallbackItemIcon(imgEl) {
+            const list = (imgEl.dataset.urlList ? imgEl.dataset.urlList.split('||') : []);
+            let i = Number(imgEl.dataset.urlIndex || '0');
+            if (i < list.length - 1) {
+                i++;
+                imgEl.dataset.urlIndex = String(i);
+                imgEl.src = list[i];
+            } else {
+                imgEl.onerror = null;
+                imgEl.src = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="100%" height="100%" fill="#444"/><text x="50%" y="55%" font-size="12" fill="#bbb" text-anchor="middle">?</text></svg>');
+            }
+        }
+        function prettyItemName(name) {
+            return zhItem(name);
+        }
+
+        function iconHTMLForItem(itemName, title, agentName) {
+            const cands = buildIconUrlCandidates(itemName, agentName);
+            const icon = cands[0];
+            return `
+                <div class="armor-slot" title="${title}">
+                    <img class="inv-img" src="${icon}" data-url-index="0" data-url-list="${cands.join('||')}" onerror="fallbackItemIcon(this)" alt="${title}">
+                </div>
+            `;
+        }
+        function emptySlotHTML(label) {
+            return `<div class="armor-slot empty" title="${label}：无"><span class="armor-placeholder">-</span></div>`;
+        }
+
+        const statusEl = document.getElementById('msStatus');
+        function updateStatus(connected) {
+            if (!statusEl) return;
+            if (connected) {
+                statusEl.textContent = '管理服务已连接';
+                statusEl.classList.remove('offline');
+                statusEl.classList.add('online');
+            } else {
+                statusEl.textContent = '管理服务未连接';
+                statusEl.classList.remove('online');
+                statusEl.classList.add('offline');
+            }
+        }
+        function subscribeToState() {
+            socket.emit('listen-to-agents');
+        }
+        // Initial status
+        updateStatus(false);
+        socket.on('connect', () => {
+            updateStatus(true);
+            subscribeToState();
+            // Clear all cached settings on reconnect
+            Object.keys(agentSettings).forEach(name => delete agentSettings[name]);
+        });
+        socket.on('disconnect', () => {
+            updateStatus(false);
+        });
+        socket.on('connect_error', () => {
+            updateStatus(false);
+        });
+
+        fetch('/settings_spec.json')
+            .then(r => r.json())
+            .then(spec => {
+                settingsSpec = spec;
+                buildSettingsForm();
+            });
+
+        function buildSettingsForm() {
+            const form = document.getElementById('settingsForm');
+            form.innerHTML = '';
+            // ensure grid for multi-column layout
+            form.style.display = 'grid';
+            form.style.gridTemplateColumns = 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))';
+            form.style.gap = '8px';
+            Object.keys(settingsSpec).forEach(key => {
+                if (key === 'profile') return; // profile handled via upload
+                const cfg = settingsSpec[key];
+                const wrapper = document.createElement('div');
+                wrapper.className = 'setting-wrapper';
+                const label = document.createElement('label');
+                label.textContent = cfg.label || key;
+                label.title = `${key}：${cfg.description || ''}`;
+                let input;
+                switch (cfg.type) {
+                    case 'boolean':
+                        input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.checked = cfg.default === true;
+                        break;
+                    case 'number':
+                        input = document.createElement('input');
+                        input.type = 'number';
+                        input.value = cfg.default;
+                        break;
+                    default:
+                        input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = typeof cfg.default === 'object' ? JSON.stringify(cfg.default) : cfg.default;
+                }
+                input.title = cfg.description || '';
+                input.id = `setting-${key}`;
+                wrapper.appendChild(label);
+                wrapper.appendChild(input);
+                form.appendChild(wrapper);
+            });
+        }
+
+        document.getElementById('uploadProfileBtn').addEventListener('click', () => {
+            document.getElementById('profileFileInput').click();
+        });
+
+        document.getElementById('profileFileInput').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                try {
+                    profileData = JSON.parse(ev.target.result);
+                    document.getElementById('submitCreateAgentBtn').disabled = false;
+                    document.getElementById('profileStatus').textContent = `角色配置：${profileData.name || '已上传'}`;
+                    document.getElementById('createError').textContent = '';
+                } catch (err) {
+                    document.getElementById('createError').textContent = '角色配置 JSON 格式错误：' + err.message;
+                    profileData = null;
+                    document.getElementById('submitCreateAgentBtn').disabled = true;
+                    document.getElementById('profileStatus').textContent = '角色配置：未上传';
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        });
+
+        document.getElementById('submitCreateAgentBtn').addEventListener('click', () => {
+            if (!profileData) return;
+            const settings = { profile: profileData };
+            Object.keys(settingsSpec).forEach(key => {
+                if (key === 'profile') return;
+                const input = document.getElementById(`setting-${key}`);
+                if (!input) return;
+                const type = settingsSpec[key].type;
+                let val;
+                if (type === 'boolean') val = input.checked;
+                else if (type === 'number') val = Number(input.value);
+                else if (type === 'array' || type === 'object') {
+                    try { val = JSON.parse(input.value); }
+                    catch { val = input.value; }
+                } else val = input.value;
+                settings[key] = val;
+            });
+            socket.emit('create-agent', settings, res => {
+                if (!res.success) {
+                    document.getElementById('createError').textContent = res.error || '未知错误';
+                } else {
+                    // reset on success
+                    profileData = null;
+                    document.getElementById('submitCreateAgentBtn').disabled = true;
+                    document.getElementById('profileStatus').textContent = '角色配置：未上传';
+                    document.getElementById('createError').textContent = '';
+                    hideCreateAgentModal();
+                }
+            });
+        });
+
+        // Modal open/close logic
+        const modalBackdrop = document.getElementById('createAgentModal');
+        document.getElementById('openCreateAgentBtn').addEventListener('click', () => {
+            buildSettingsForm();
+            modalBackdrop.style.display = 'flex';
+        });
+        function hideCreateAgentModal() {
+            modalBackdrop.style.display = 'none';
+        }
+        document.getElementById('closeCreateAgentBtn').addEventListener('click', hideCreateAgentModal);
+
+        socket.on('bot-output', (agentName, message) => {
+            agentLastMessage[agentName] = message;
+            const messageDiv = document.getElementById(`lastMessage-${agentName}`);
+            if (messageDiv) {
+                messageDiv.textContent = '最近消息：' + message;
+            }
+        });
+
+        // Subscribe to aggregated state updates (re-sent on each connect)
+        socket.on('state-update', (states) => {
+            window.lastStates = states;
+            Object.keys(states || {}).forEach(name => {
+                const st = states[name];
+                const healthEl = document.getElementById(`health-${name}`);
+                if (st && !st.error) {
+                    const gp = st.gameplay || {};
+                    if (healthEl && typeof gp.health === 'number') {
+                        const hMax = typeof gp.healthMax === 'number' ? gp.healthMax : 20;
+                        healthEl.textContent = `生命值：${gp.health}/${hMax}`;
+                    }
+                    const posEl = document.getElementById(`pos-${name}`);
+                    const hunEl = document.getElementById(`hunger-${name}`);
+                    const bioEl = document.getElementById(`biome-${name}`);
+                    const modeEl = document.getElementById(`mode-${name}`);
+                    const itemsEl = document.getElementById(`items-${name}`);
+                    const equippedEl = document.getElementById(`equipped-${name}`);
+                    const invGrid = document.getElementById(`inventory-${name}`);
+                    const actionEl = document.getElementById(`action-${name}`);
+                    if (posEl && gp.position) {
+                        const p = gp.position;
+                        posEl.textContent = `坐标：X ${p.x}，Y ${p.y}，Z ${p.z}`;
+                    }
+                    if (hunEl && typeof gp.hunger === 'number') {
+                        const fMax = typeof gp.hungerMax === 'number' ? gp.hungerMax : 20;
+                        hunEl.textContent = `饥饿值：${gp.hunger}/${fMax}`;
+                    }
+                    if (bioEl && gp.biome) bioEl.textContent = `群系：${zhBiome(gp.biome)}`;
+                    if (modeEl && gp.gamemode) modeEl.textContent = `游戏模式：${zhGameMode(gp.gamemode)}`;
+                    if (itemsEl && st.inventory) {
+                        const used = st.inventory.stacksUsed ?? 0;
+                        const total = st.inventory.totalSlots ?? 0;
+                        itemsEl.textContent = `背包已用槽位：${used}/${total}`;
+                    }
+                    if (equippedEl && st.inventory?.equipment) {
+                        const e = st.inventory.equipment;
+                        equippedEl.textContent = `主手：${e.mainHand ? prettyItemName(e.mainHand) : '无'}`;
+                    }
+                    const armorEl = document.getElementById(`armor-${name}`);
+                    if (armorEl && st.inventory?.equipment) {
+                        const e = st.inventory.equipment;
+                        const parts = [];
+                        parts.push(e.helmet ? iconHTMLForItem(e.helmet, `头部：${prettyItemName(e.helmet)}`, name) : emptySlotHTML('头部'));
+                        parts.push(e.chestplate ? iconHTMLForItem(e.chestplate, `胸部：${prettyItemName(e.chestplate)}`, name) : emptySlotHTML('胸部'));
+                        parts.push(e.leggings ? iconHTMLForItem(e.leggings, `腿部：${prettyItemName(e.leggings)}`, name) : emptySlotHTML('腿部'));
+                        parts.push(e.boots ? iconHTMLForItem(e.boots, `脚部：${prettyItemName(e.boots)}`, name) : emptySlotHTML('脚部'));
+                        // Main hand for quick glance
+                        parts.push(e.mainHand ? iconHTMLForItem(e.mainHand, `主手：${prettyItemName(e.mainHand)}`, name) : emptySlotHTML('主手'));
+                        armorEl.innerHTML = `<div class="armor-grid">${parts.join('')}</div>`;
+                    }
+                    if (actionEl && st.action) {
+                        actionEl.textContent = `动作：${zhAction(st.action.current)}`;
+                        if (st.runtime) {
+                            const loop = {active: '运行', paused: '处理消息中', stopped: '停止'}[st.runtime.loopState] || '未知';
+                            actionEl.textContent += ` · 自主循环：${loop} · API并发：${st.runtime.activeModelRequests}`;
+                            const wake = st.runtime.idleWakeup;
+                            if (wake) {
+                                const label = {'explicit-stop': '已明确停止', 'intentional-wait': '主动等待', action: '执行任务中', model: '处理请求中', waking: '正在唤醒', offline: '离线'}[wake.state];
+                                actionEl.textContent += ` · 空闲唤醒：${label || Math.ceil((wake.remainingMs ?? 60000) / 1000) + '秒'}`;
+                            }
+                        }
+                        const _statusColors = { acting: '#4CAF50', chatting: '#42a5f5', thinking: '#9e9e9e', stopped: '#f44336', idle: '#888' };
+                        actionEl.style.color = _statusColors[st.action.kind] || '';
+                    }
+                    if (invGrid && st.inventory?.counts) {
+                        const counts = st.inventory.counts;
+                        const entries = Object.entries(counts);
+                        if (entries.length) {
+                            invGrid.classList.remove('empty');
+                            invGrid.innerHTML = entries
+                                .sort((a, b) => a[0].localeCompare(b[0]))
+                                .map(([k, v]) => {
+                                    const title = prettyItemName(k);
+                                    const safeAttr = k.replace(/'/g, "\\'");
+                                    const iconCandidates = buildIconUrlCandidates(k, name);
+                                    const icon = iconCandidates[0];
+                                    return `
+                                        <div class="inv-item" title="${title}">
+                                            <img class="inv-img" src="${icon}" data-url-index="0" data-url-list="${iconCandidates.join('||')}" onerror="fallbackItemIcon(this)" alt="${title}">
+                                            <div class="inv-count">${v}</div>
+                                            <div class="inv-name">${title}</div>
+                                        </div>
+                                    `;
+                                })
+                                .join('');
+                        } else {
+                            invGrid.classList.add('empty');
+                            invGrid.innerHTML = '<div class="cell">（空）</div>';
+                        }
+                    }
+                }
+            });
+        });
+
+        function fetchAgentSettings(name, refresh = false) {
+            return new Promise((resolve) => {
+                if (!refresh && agentSettings[name]) { resolve(agentSettings[name]); return; }
+                socket.timeout(5000).emit('get-settings', name, (error, res) => {
+                    if (error || !res) return resolve(null);
+                    if (res.settings) {
+                        agentSettings[name] = res.settings;
+                        resolve(res.settings);
+                    } else resolve(null);
+                });
+            });
+        }
+
+        // Agent settings modal logic
+        const agentSettingsModal = document.getElementById('agentSettingsModal');
+        const agentSettingsForm = document.getElementById('agentSettingsForm');
+        const applyBtn = document.getElementById('applyAgentSettingsBtn');
+        const discardBtn = document.getElementById('discardAgentSettingsBtn');
+        const closeAgentSettingsBtn = document.getElementById('closeAgentSettingsBtn');
+        const agentSettingsTitle = document.getElementById('agentSettingsTitle');
+        let currentAgentName = null;
+        let originalAgentSettings = null;
+        const settingsError = document.createElement('div');
+        settingsError.setAttribute('role', 'alert');
+        settingsError.style.cssText = 'color:#ef9a9a;margin:8px 0;white-space:pre-wrap;';
+        agentSettingsForm.after(settingsError);
+
+        function buildAgentSettingsForm(settings) {
+            agentSettingsForm.innerHTML = '';
+            agentSettingsForm.style.display = 'grid';
+            agentSettingsForm.style.gridTemplateColumns = 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))';
+            agentSettingsForm.style.gap = '8px';
+            Object.keys(settingsSpec).forEach(key => {
+                if (key === 'profile') return; // profile not edited here
+                const cfg = settingsSpec[key];
+                const wrapper = document.createElement('div');
+                wrapper.className = 'setting-wrapper';
+                const label = document.createElement('label');
+                label.textContent = cfg.label || key;
+                label.title = `${key}：${cfg.description || ''}`;
+                let input;
+                switch (cfg.type) {
+                    case 'boolean':
+                        input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.checked = Boolean(settings[key]);
+                        break;
+                    case 'number':
+                        input = document.createElement('input');
+                        input.type = 'number';
+                        input.value = settings[key] ?? cfg.default ?? 0;
+                        break;
+                    default:
+                        input = document.createElement('input');
+                        input.type = 'text';
+                        const defVal = settings[key] ?? cfg.default ?? '';
+                        input.value = typeof defVal === 'object' ? JSON.stringify(defVal) : defVal;
+                }
+                input.id = `agent-setting-${key}`;
+                input.addEventListener('input', onAgentSettingsChanged);
+                if (input.type === 'checkbox') input.addEventListener('change', onAgentSettingsChanged);
+                wrapper.appendChild(label);
+                wrapper.appendChild(input);
+                agentSettingsForm.appendChild(wrapper);
+            });
+            onAgentSettingsChanged();
+        }
+
+        function openAgentSettings(name) {
+            currentAgentName = name;
+            agentSettingsTitle.textContent = `${name} 的设置`;
+            settingsError.textContent = '';
+            fetchAgentSettings(name, true).then(settings => {
+                if (!settings) { alert('读取配置失败，请确认管理服务已连接。'); return; }
+                originalAgentSettings = JSON.parse(JSON.stringify(settings || {}));
+                buildAgentSettingsForm(settings || {});
+                agentSettingsModal.style.display = 'flex';
+            });
+        }
+        window.openAgentSettings = openAgentSettings;
+
+        function getEditedAgentSettings() {
+            const newSettings = JSON.parse(JSON.stringify(originalAgentSettings || {}));
+            Object.keys(settingsSpec).forEach(key => {
+                if (key === 'profile') return;
+                const cfg = settingsSpec[key];
+                const input = document.getElementById(`agent-setting-${key}`);
+                if (!input) return;
+                let val;
+                if (cfg.type === 'boolean') val = input.checked;
+                else if (cfg.type === 'number') val = Number(input.value);
+                else if (cfg.type === 'array' || cfg.type === 'object') {
+                    try { val = key === 'task' && !input.value.trim() ? null : JSON.parse(input.value); }
+                    catch { val = input.value; }
+                } else val = input.value;
+                newSettings[key] = val;
+            });
+            return newSettings;
+        }
+
+        function shallowEqual(a, b) {
+            if (!a || !b) return false;
+            const keys = Object.keys(settingsSpec).filter(k => k !== 'profile');
+            for (const k of keys) {
+                const va = a[k];
+                const vb = b[k];
+                if (typeof va === 'object' || typeof vb === 'object') {
+                    if (JSON.stringify(va) !== JSON.stringify(vb)) return false;
+                } else if (va !== vb) return false;
+            }
+            return true;
+        }
+
+        function onAgentSettingsChanged() {
+            if (!originalAgentSettings) { applyBtn.disabled = true; return; }
+            const edited = getEditedAgentSettings();
+            applyBtn.disabled = shallowEqual(edited, originalAgentSettings);
+        }
+
+        function closeAgentSettings() {
+            agentSettingsModal.style.display = 'none';
+            currentAgentName = null;
+            originalAgentSettings = null;
+        }
+
+        function updateAgentViewer(name) {
+            const agentEl = document.getElementById(`agent-${name}`);
+            if (!agentEl) return;
+
+            const settings = agentSettings[name];
+            const viewerContainer = agentEl.querySelector('.agent-view-container');
+            if (!viewerContainer) return;
+
+            const agentState = currentAgents.find(a => a.name === name);
+            const shouldShow = agentState?.in_game && settings?.render_bot_view === true;
+            viewerContainer.parentElement.style.display = shouldShow ? '' : 'none';
+        }
+
+        discardBtn.addEventListener('click', () => {
+            if (!currentAgentName || !originalAgentSettings) return;
+            buildAgentSettingsForm(originalAgentSettings);
+        });
+
+        applyBtn.addEventListener('click', () => {
+            if (!currentAgentName) return;
+            const name = currentAgentName;
+            const edited = getEditedAgentSettings();
+            applyBtn.disabled = true;
+            applyBtn.textContent = '正在保存…';
+            settingsError.textContent = '';
+            socket.timeout(8000).emit('set-agent-settings', name, edited, (error, result) => {
+                applyBtn.textContent = '保存并重启';
+                if (error || !result?.success) {
+                    settingsError.textContent = error ? '未收到保存确认，请重新打开设置核对当前值。' : result.error;
+                    applyBtn.disabled = false;
+                    return;
+                }
+                agentSettings[name] = result.settings;
+                updateAgentViewer(name);
+                if (currentAgentName === name) closeAgentSettings();
+            });
+        });
+
+        closeAgentSettingsBtn.addEventListener('click', closeAgentSettings);
+
+
+        function agentStatusText(agent) {
+            const labels = { stopped: '已断开', starting: '正在启动…', connecting: '正在连接服务器…', authenticating: '正在登录认证…', online: '已进服', restarting: '正在重启…', stopping: '正在断开…', error: '连接失败', retrying: '等待自动重连' };
+            let text = labels[agent.stage] || (agent.in_game ? '已进服' : '已断开');
+            if (agent.stage === 'retrying' && agent.retryAt) text += `（${new Date(agent.retryAt).toLocaleTimeString('zh-CN')}）`;
+            if (agent.error) text += ` · ${agent.error}`;
+            const escaped = document.createElement('span');
+            escaped.textContent = text;
+            return escaped.innerHTML;
+        }
+
+        function renderAgentCard(agent) {
+            const cfg = agentSettings[agent.name] || {};
+            const showViewer = agent.in_game && cfg.render_bot_view === true;
+            const viewerPort = agent.viewerPort;
+            const viewerHTML = showViewer ? `<div class="agent-view-container"><iframe class="agent-viewer" id="viewer-${agent.name}" src="http://localhost:${viewerPort}"></iframe></div>` : '';
+            const lastMessage = agentLastMessage[agent.name] || '';
+            const invOpen = inventoryOpen[agent.name] === true;
+            const invStyle = invOpen ? '' : 'display:none;';
+            return `
+                    <div class="agent" id="agent-${agent.name}">
+                        <div class="agent-grid">
+                            <div class="cell title" style="grid-column: 1 / -1; display:flex; align-items:center; justify-content:space-between;">
+                                <span><span class="status-icon ${agent.in_game ? 'online' : 'offline'}">●</span>${agent.name}<span style="margin-left:6px;color:${agent.in_game ? '#83d99a' : '#f0ad4e'};">${agentStatusText(agent)}</span>
+                                    <button class="gear-btn" title="设置" onclick="openAgentSettings('${agent.name}')">⚙</button>
+                                    <button class="gear-btn" title="背包" onclick="toggleDetails('${agent.name}')">背包</button>
+                                    <button class="gear-btn" title="查看记忆、上下文、地点与位置" onclick="openAgentInspection('${agent.name}')">记忆与位置</button>
+                                    <button class="gear-btn" onclick="openAgentSystemLogs('${agent.name}')">查看系统日志</button>
+                                    <button class="gear-btn" onclick="openAgentApiLogs('${agent.name}')">查看 API 调用日志</button>
+                                </span>
+                            </div>
+                            ${showViewer ? `<div class="cell" style="grid-row: span 3; padding:0;">${viewerHTML}</div>` : ''}
+                            <div class="cell" id="action-${agent.name}">动作：-</div>
+                            <div class="cell" id="mode-${agent.name}">游戏模式：-</div>
+                            <div class="cell" id="health-${agent.name}">生命值：-</div>
+                            <div class="cell" id="hunger-${agent.name}">饥饿值：-</div>
+                            <div class="cell" id="pos-${agent.name}">坐标：-</div>
+                            <div class="cell" id="biome-${agent.name}">群系：-</div>
+                            <div class="cell" id="items-${agent.name}">背包已用槽位：-</div>
+                            <div class="cell" id="equipped-${agent.name}">主手：-</div>
+                            <div class="agent-inventory" id="inventorySection-${agent.name}" style="${invStyle} grid-column: 1 / -1;">
+                                <h3>背包</h3>
+                                <div class="cell" id="armor-${agent.name}" style="margin-bottom: 8px;">装备：-</div>
+                                <div class="inventory-grid" id="inventory-${agent.name}"></div>
+                            </div>
+                            <div id="lastMessage-${agent.name}" class="last-message" style="grid-column: 1 / -1;"><strong>最近消息：</strong> ${lastMessage}</div>
+                        </div>
+                        <div class="controls-row">
+                            <button class="start-btn" id="sendBtn-${agent.name}" disabled onclick="sendMessage('${agent.name}', document.getElementById('messageInput-${agent.name}').value)">发送</button>
+                            <input class="msg-input" type="text" id="messageInput-${agent.name}" placeholder="输入消息或指令…" 
+                                oninput="onMsgInputChange('${agent.name}')"
+                                onkeydown="if(event.key === 'Enter') document.getElementById('sendBtn-${agent.name}').click()"
+                                ${!agent.in_game ? 'disabled' : ''}>
+                            <button class="neutral-btn" onclick="sendMessage('${agent.name}', '!stop')" ${!agent.in_game ? 'disabled' : ''}>停止动作</button>
+                            <button class="neutral-btn" onclick="sendMessage('${agent.name}', '!stay(-1)')" ${!agent.in_game ? 'disabled' : ''}>原地等待</button>
+                            <button class="neutral-btn" onclick="restartAgent('${agent.name}')">${agent.in_game ? '重启' : '立即重试'}</button>
+                            <button class="neutral-btn" ${(agent.in_game || agent.socket_connected || ['starting','connecting','authenticating','restarting','stopping','retrying'].includes(agent.stage)) ? `onclick=\"disconnectAgent('${agent.name}')\"` : `onclick=\"startAgent('${agent.name}')\"`}>${agent.in_game ? '断开连接' : (agent.socket_connected || ['starting','connecting','authenticating','restarting','stopping','retrying'].includes(agent.stage) ? '取消连接' : '连接')}</button>
+                            <button class="stop-btn" onclick="destroyAgent('${agent.name}')">移除</button>
+                        </div>
+                    </div>`;
+        }
+
+        async function renderAgents(agents) {
+            if (!agents.length) {
+                agentsDiv.innerHTML = '<div class="agent">暂无机器人连接</div>';
+                return;
+            }
+
+            // If agentsDiv is empty, do a full render
+            if (!agentsDiv.children.length) {
+                agentsDiv.innerHTML = agents.map(agent => renderAgentCard(agent)).join('');
+                // Update all viewers after initial render
+                setTimeout(() => {
+                    agents.forEach(a => {
+                        if (a.in_game) updateAgentViewer(a.name);
+                    });
+                }, 0);
+                return;
+            }
+
+            // Compare with current agents to find changes
+            const prevAgents = currentAgents.reduce((acc, a) => ({ ...acc, [a.name]: a }), {});
+            const changedAgents = agents.filter(a => {
+                const prev = prevAgents[a.name];
+                return !prev || prev.in_game !== a.in_game || prev.viewerPort !== a.viewerPort || prev.socket_connected !== a.socket_connected || prev.stage !== a.stage || prev.retryAt !== a.retryAt || prev.error !== a.error;
+            });
+
+            // Update only changed agents
+            changedAgents.forEach(agent => {
+                const el = document.getElementById(`agent-${agent.name}`);
+                if (el) {
+                    // Update existing card
+                    el.outerHTML = renderAgentCard(agent);
+                    if (agent.in_game) updateAgentViewer(agent.name);
+                } else {
+                    // Add new card
+                    agentsDiv.insertAdjacentHTML('beforeend', renderAgentCard(agent));
+                    if (agent.in_game) updateAgentViewer(agent.name);
+                }
+            });
+
+            // Remove cards for agents that no longer exist
+            Array.from(agentsDiv.children).forEach(el => {
+                const name = el.id.replace('agent-', '');
+                if (!agents.find(a => a.name === name)) {
+                    el.remove();
+                    delete inventoryOpen[name];
+                }
+            });
+        }
+
+        socket.on('agents-status', async (agents) => {
+            // Fetch settings for all agents that don't have current settings
+            const needSettings = agents.filter(a => !agentSettings[a.name]);
+            if (needSettings.length > 0) {
+                await Promise.all(needSettings.map(async (a) => {
+                    const settings = await fetchAgentSettings(a.name);
+                    if (settings) {
+                        agentSettings[a.name] = settings;
+                    }
+                }));
+            }
+
+            // Compare with current agents to find changes
+            const prevAgents = currentAgents.reduce((acc, a) => ({ ...acc, [a.name]: a }), {});
+            const changedAgents = agents.filter(a => {
+                const prev = prevAgents[a.name];
+                return !prev || prev.in_game !== a.in_game || prev.viewerPort !== a.viewerPort || prev.socket_connected !== a.socket_connected || prev.stage !== a.stage || prev.retryAt !== a.retryAt || prev.error !== a.error;
+            });
+
+            // Update current agents list
+            currentAgents = agents;
+
+            // If agentsDiv is empty, do a full render
+            if (!agentsDiv.children.length) {
+                agentsDiv.innerHTML = agents.map(agent => renderAgentCard(agent)).join('');
+                // Update all viewers after initial render
+                setTimeout(() => {
+                    agents.forEach(a => {
+                        if (a.in_game) updateAgentViewer(a.name);
+                    });
+                }, 0);
+                return;
+            }
+
+            // Update only changed agents
+            changedAgents.forEach(agent => {
+                const el = document.getElementById(`agent-${agent.name}`);
+                if (el) {
+                    // Update existing card
+                    el.outerHTML = renderAgentCard(agent);
+                    if (agent.in_game) updateAgentViewer(agent.name);
+                } else {
+                    // Add new card
+                    agentsDiv.insertAdjacentHTML('beforeend', renderAgentCard(agent));
+                    if (agent.in_game) updateAgentViewer(agent.name);
+                }
+            });
+
+            // Remove cards for agents that no longer exist
+            Array.from(agentsDiv.children).forEach(el => {
+                const name = el.id.replace('agent-', '');
+                if (!agents.find(a => a.name === name)) {
+                    el.remove();
+                    delete inventoryOpen[name];
+                }
+            });
+        });
+
+        function restartAgent(n) { socket.emit('restart-agent', n); }
+        function disconnectAgent(n) { socket.emit('stop-agent', n); }
+        function startAgent(n) { socket.emit('start-agent', n); }
+        function stopAgent(n) { socket.emit('stop-agent', n); }
+        function destroyAgent(n) { socket.emit('destroy-agent', n); }
+        function disconnectAllAgents() { 
+            socket.emit('stop-all-agents'); 
+        }
+        function confirmShutdown() {
+            if (confirm('确定关闭管理服务吗？\n所有机器人都将停止，网页管理服务也会关闭。')) {
+                socket.emit('shutdown');
+            }
+        }
+        function sendMessage(n, m) {
+            if (!m || !m.trim()) return;
+            socket.emit('send-message', n, { from: 'ADMIN', message: m });
+            const input = document.getElementById(`messageInput-${n}`);
+            const btn = document.getElementById(`sendBtn-${n}`);
+            if (input) input.value = '';
+            if (btn) btn.disabled = true;
+        }
+        function onMsgInputChange(name) {
+            const input = document.getElementById(`messageInput-${name}`);
+            const btn = document.getElementById(`sendBtn-${name}`);
+            if (btn && input) {
+                btn.disabled = !(input.value && input.value.trim().length > 0);
+            }
+        }
+
+        function toggleDetails(name) {
+            const invSection = document.getElementById(`inventorySection-${name}`);
+            if (!invSection) return;
+            const visible = invSection.style.display !== 'none';
+            const newVisible = !visible;
+            invSection.style.display = newVisible ? '' : 'none';
+            inventoryOpen[name] = newVisible;
+        }
+        window.toggleDetails = toggleDetails;
+    </script>
+    <script src="/manual-memory-panel.js"></script>
+    <script src="/core-summary-panel.js"></script>
+    <script src="/inspection-panel.js"></script>
+    <script>initAgentInspection(socket);</script>
+    <script src="/console-logs.js"></script>
+    <script>initConsoleLogs(socket, () => currentAgents);</script>
+</body>
+</html> 

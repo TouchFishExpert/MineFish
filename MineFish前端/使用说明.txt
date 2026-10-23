@@ -1,0 +1,58 @@
+MineFish 纯前端 Demo
+===================
+
+直接双击本目录中的 MineFish-Demo.exe 即可打开。
+便携版不需要安装，不需要 Node.js、浏览器或后端服务，也不需要联网。
+首次打开时会将自带的界面运行环境解压到 Windows 临时目录，稍等数秒即可。
+
+页面与演示操作
+--------------
+总览：状态卡片、机器人概览、工作流程、活动与用量图表。
+机器人：切换四个示例机器人；启动、暂停、召回与停止任务；输入本地消息；新建演示机器人。
+模型：切换提供商；搜索和筛选模型；分配模型；调节参数与切换统计周期。
+记忆：搜索、分类、排序和添加记忆；查看 API 请求样例详情。
+日志：筛选示例日志并导出 CSV。
+插件：启用、停用和配置演示插件。
+系统：运行概览、插件管理、事件日志、更新与诊断。
+
+所有运行状态、连接、任务、日志、请求、用量和费用均为示例数据。
+所有操作只改变当前窗口的演示状态，关闭后重置；不会启动机器人或连接游戏、模型及其他后端。
+原生窗口桥接只提供最小化、最大化和关闭功能。
+
+文件结构
+--------
+MineFish-Demo.exe        可独立复制、运行的 Windows x64 便携程序
+src/index.html          页面入口；也可用浏览器直接打开
+src/styles.css          页面样式
+src/app.js              所有前端页面、示例数据和本地交互
+electron/main.cjs       桌面窗口与离线限制
+electron/preload.cjs    窗口控制桥接
+assets/                 内置图标、插图及参考素材
+scripts/                开发辅助与检查脚本
+qa/browser/             与参考图相同尺寸的页面实拍及检查结果
+qa/portable/            已打包程序的页面实拍及检查结果
+release/                打包输出及解包版
+
+后续开发
+--------
+开发环境需要 Node.js 22.12 或更高版本。
+执行 npm install 安装开发依赖，再执行 npx install-electron 准备桌面运行环境。
+执行 node scripts/prepare-assets.cjs 更新本地图标。
+执行 npm start 启动开发窗口。
+执行 npm run package 生成 release/MineFish-Demo.exe。
+未来可在 src/app.js 的示例数据和 action 函数处逐步接入业务接口。
+
+参考与素材
+----------
+根据工作区“前端示意图”中的 5 张 1586×992 图片重建。
+Minecraft 场景、机器人头像、物品图像复用用户提供的参考素材，通过 CSS 裁切显示。
+界面文字、卡片、表格、图表、表单和交互均为实际 HTML/CSS/JavaScript。
+通用图标：Lucide，ISC License，https://lucide.dev
+品牌图标：Lobe Icons，MIT License，https://github.com/lobehub/lobe-icons
+豆包图标按参考图中的紫色星形样式保留；同时附带下载的品牌 SVG。
+桌面运行环境：Electron，https://www.electronjs.org
+
+适配说明
+--------
+以参考图的 1586×992 尺寸进行对照，窗口会按屏幕可用空间等比例适配。
+Windows 显示缩放与字体渲染可能影响最终像素观感。

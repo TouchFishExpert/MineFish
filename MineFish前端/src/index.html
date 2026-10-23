@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>MineFish · Minecraft AI Teammate</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="logo-key" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  3 0 0 0 -0.4"/></filter></defs></svg>
+  <div id="app" class="page-overview">
+    <header class="titlebar">
+      <div class="brand-logo" aria-hidden="true"></div>
+      <div class="brand"><b>MineFish</b><span>Minecraft AI Teammate</span></div>
+      <div class="window-controls">
+        <button data-window="minimize" aria-label="最小化"><i data-lucide="minus"></i></button>
+        <button data-window="maximize" aria-label="最大化或还原"><i data-lucide="square"></i></button>
+        <button data-window="close" aria-label="关闭"><i data-lucide="x"></i></button>
+      </div>
+    </header>
+    <aside class="sidebar">
+      <nav aria-label="主导航" id="navigation"></nav>
+      <footer><b>MineFish</b><span>v0.1.0&nbsp; Beta</span><span class="running"><em></em>运行中</span></footer>
+    </aside>
+    <main id="content"></main>
+    <div id="toast" role="status"></div>
+    <div id="modal-layer"></div>
+  </div>
+  <script src="../assets/lucide.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "name": "minefish-frontend-demo",
+  "version": "0.1.0",
+  "description": "MineFish 离线纯前端演示",
+  "author": "MineFish",
+  "private": true,
+  "main": "electron/main.cjs",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-builder --win portable --x64 --publish never",
+    "verify": "node scripts/verify.cjs"
+  },
+  "build": {
+    "appId": "com.minefish.frontend.demo",
+    "productName": "MineFish",
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "electron/**",
+      "src/**",
+      "assets/**",
+      "package.json"
+    ],
+    "asar": true,
+    "electronDist": "node_modules/electron/dist",
+    "win": {
+      "target": "portable",
+      "icon": "assets/app.ico",
+      "signExecutable": false
+    },
+    "portable": {
+      "artifactName": "MineFish-Demo.exe",
+      "requestExecutionLevel": "user"
+    },
+    "compression": "normal"
+  },
+  "devDependencies": {
+    "@lobehub/icons-static-svg": "1.98.0",
+    "electron": "45.0.0",
+    "electron-builder": "26.15.3",
+    "lucide": "1.61.0"
+  }
+}

@@ -1,0 +1,49 @@
+.cell.title > span { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+.inspection-backdrop { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; background: #0009; padding: 12px; }
+.inspection-backdrop[hidden], .inspection-panel [hidden] { display: none !important; }
+.inspection-panel { width: min(940px, 100%); max-height: 90vh; display: flex; flex-direction: column; background: #242829; border: 1px solid #515c59; border-radius: 12px; box-shadow: 0 20px 70px #0009; overflow: hidden; }
+.inspection-header, .inspection-toolbar, .inspection-tabs { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px 18px; }
+.inspection-header { justify-content: space-between; }
+.inspection-header h2 { margin: 0; font-size: 20px; }
+.inspection-panel button { border: 1px solid #59645f; background: #343d39; border-radius: 6px; padding: 7px 11px; color: #e6eeea; cursor: pointer; font: inherit; }
+.inspection-panel button:focus-visible { outline: 2px solid #85dbc0; outline-offset: 2px; }
+.inspection-panel button:disabled { opacity: .5; cursor: wait; }
+.inspection-panel button[aria-selected="true"] { background: #1e5949; border-color: #7bc6aa; color: #c7f9e6; }
+.inspection-toolbar { padding-top: 0; color: #b8c4be; font-size: 12px; }
+.inspection-status { flex: 1; min-width: 120px; }
+.inspection-status[data-error="true"] { color: #ffbf8c; }
+.inspection-tabs { border-block: 1px solid #424c47; padding-block: 9px; }
+.inspection-tabs button { flex: 1; white-space: nowrap; font-size: 13px; }
+.inspection-body { padding: 0 18px 16px; overflow-y: auto; min-height: 160px; }
+.inspection-section h3 { font-size: 15px; color: #c2ead9; margin: 18px 0 8px; }
+.inspection-text { white-space: pre-wrap; overflow-wrap: anywhere; background: #1a201d; border: 1px solid #38463e; border-radius: 6px; padding: 12px; line-height: 1.7; font-size: 14px; }
+.inspection-hint { color: #b7bfb9; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.inspection-empty { color: #c0c8c2; padding: 12px 0; font-size: 14px; }
+.inspection-location { background: #1a201d; border: 1px solid #3e4d43; border-radius: 6px; padding: 12px; margin: 8px 0; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.inspection-location strong { color: #c4e8d7; }
+.inspection-location p { margin: 3px 0; }
+.inspection-disclaimer { border-left: 3px solid #b39054; padding-left: 10px; }
+.inspection-memory-editor { width: 100%; box-sizing: border-box; resize: vertical; min-height: 180px; background: #151d18; color: #ebf6ee; border: 1px solid #7dc2a0; border-radius: 6px; padding: 12px; font: inherit; font-size: 14px; line-height: 1.7; margin-top: 8px; }
+.inspection-memory-editor:focus { outline: 2px solid #85dbc0; outline-offset: 1px; }
+.inspection-edit-btn { margin-top: 10px; }
+.inspection-edit-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.inspection-edit-conflict { border-left: 3px solid #d0a45e; padding: 0 0 4px 12px; margin-top: 12px; }
+.inspection-edit-feedback, .inspection-save-notice { color: #b8e1cf; }
+.inspection-edit-conflict .inspection-text { max-height: 200px; overflow-y: auto; margin-bottom: 10px; }
+@media (max-width: 600px) {
+    .inspection-backdrop { padding: 8px; }
+    .inspection-panel { max-height: 94vh; }
+    .inspection-header, .inspection-toolbar, .inspection-tabs { padding-inline: 12px; }
+    .inspection-header h2 { font-size: 17px; }
+    .inspection-body { padding-inline: 12px; }
+    .inspection-tabs { gap: 5px; }
+    .inspection-tabs button { padding: 7px 4px; font-size: 12px; }
+}
+
+.inspection-panel-context { width: min(1100px, 100%); }
+.inspection-context-actions { display: flex; align-items: center; gap: 16px; margin: 12px 0 8px; font-size: 13px; color: #c7d7ce; }
+.inspection-context-actions label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.inspection-context-counts { color: #b8ecd5; font-size: 14px; font-weight: 600; margin: 10px 0 6px; }
+.inspection-context-meta { white-space: pre-wrap; margin: 6px 0 10px; }
+.inspection-context-text { display: block; width: 100%; box-sizing: border-box; height: 48vh; min-height: 280px; resize: vertical; background: #141b17; color: #e2eee6; border: 1px solid #506958; border-radius: 6px; padding: 14px; font: 13px/1.65 Consolas, 'Microsoft YaHei', monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.inspection-context-text:focus { outline: 2px solid #85dbc0; outline-offset: 1px; }

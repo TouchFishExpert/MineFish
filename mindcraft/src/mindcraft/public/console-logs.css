@@ -1,0 +1,41 @@
+.console-log-backdrop { position:fixed; inset:0; z-index:1300; padding:18px; background:#000a; display:flex; align-items:center; justify-content:center; }
+.console-log-backdrop[hidden], .console-log-panel [hidden] { display:none !important; }
+.console-log-panel { width:min(1380px,100%); max-height:94vh; display:flex; flex-direction:column; overflow:hidden; background:#202625; color:#e1e9e6; border:1px solid #52665c; border-radius:12px; box-shadow:0 24px 80px #0009; }
+.console-log-header,.console-log-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 18px; }
+.console-log-header { justify-content:space-between; border-bottom:1px solid #394b42; }
+.console-log-header h2 { margin:0; font-size:19px; }
+.console-log-panel button,.console-log-panel select { padding:7px 11px; border:1px solid #57695e; background:#303c35; color:#e4eee8; border-radius:6px; font:inherit; cursor:pointer; }
+.console-log-panel button:disabled { opacity:.5; cursor:default; }
+.console-log-panel button:focus-visible,.console-log-panel select:focus-visible { outline:2px solid #a0ddbd; outline-offset:2px; }
+.console-log-toolbar { padding-block:10px; font-size:12px; }
+.console-log-toolbar button[aria-pressed="true"] { background:#1a5840; border-color:#81b99c; }
+.console-log-status { flex:1; min-width:180px; color:#b4c9bd; }
+.console-log-status[data-error="true"] { color:#ffc69d; }
+.console-log-note { margin:0; padding:0 18px 12px; font-size:12px; line-height:1.6; color:#a6bcb0; }
+.console-system-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr)); gap:14px; padding:0 18px 18px; overflow:auto; }
+.console-system-card { min-width:0; border:1px solid #41564a; border-radius:8px; background:#17201b; overflow:hidden; }
+.console-system-card header { display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid #35483c; }
+.console-system-card h3 { flex:1; margin:0; font-size:14px; color:#bfe7ce; }
+.console-system-card header button { font-size:11px; padding:5px 8px; }
+.console-system-output { min-height:240px; height:49vh; max-height:600px; overflow:auto; padding:10px; font:12px/1.65 Consolas,"Microsoft YaHei",monospace; overflow-wrap:anywhere; }
+.console-system-line { display:flex; align-items:flex-start; gap:8px; padding-block:2px; }
+.console-system-line time { color:#829d8b; flex:none; font-size:11px; }
+.console-system-line span { white-space:pre-wrap; }
+.console-system-line[data-level="error"] span { color:#ffb19e; }
+.console-system-line[data-level="warn"] span { color:#f0cf8e; }
+.console-log-empty { padding:18px; color:#9fb4a6; font-size:13px; line-height:1.7; }
+.console-api-view { min-height:330px; height:65vh; display:grid; grid-template-columns:240px minmax(0,1fr); border-top:1px solid #3b5042; }
+.console-api-list { padding:10px; overflow:auto; background:#19211c; border-right:1px solid #3b5042; }
+.console-api-list button { display:block; text-align:left; width:100%; margin-bottom:8px; padding:10px; line-height:1.6; font-size:12px; }
+.console-api-list button[aria-current="true"] { background:#1d513a; border-color:#91c6a6; }
+.console-api-list button strong { display:block; font-size:13px; color:#d0f1dc; }
+.console-api-list button small { display:block; color:#acbfb2; overflow-wrap:anywhere; }
+.console-api-list .console-api-older { text-align:center; }
+.console-api-detail { min-width:0; overflow:auto; display:flex; flex-direction:column; }
+.console-api-meta { margin:0; padding:12px 14px; font-size:12px; line-height:1.7; color:#bed4c5; border-bottom:1px solid #3b5042; white-space:pre-wrap; overflow-wrap:anywhere; }
+.console-api-payloads { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px; flex:1; min-height:220px; }
+.console-api-payload { min-width:0; display:flex; flex-direction:column; overflow:hidden; border:1px solid #42594b; border-radius:7px; background:#121b15; }
+.console-api-payload h3 { margin:0; padding:10px; font-size:13px; color:#c2e7ce; border-bottom:1px solid #314337; background:#202f25; }
+.console-api-payload pre { margin:0; padding:12px; flex:1; min-height:160px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; font:12px/1.65 Consolas,"Microsoft YaHei",monospace; tab-size:2; }
+@media(max-width:900px) { .console-api-view {grid-template-columns:190px minmax(0,1fr);} .console-api-payloads {grid-template-columns:1fr;} .console-api-payload pre {max-height:42vh;} }
+@media(max-width:600px) { .console-log-backdrop {padding:6px;} .console-log-header,.console-log-toolbar {padding-inline:12px;} .console-api-view {grid-template-columns:1fr; height:70vh; overflow:auto;} .console-api-list {max-height:170px; border-bottom:1px solid #3b5042;} .console-api-detail {overflow:visible;} .console-system-output {height:36vh;} }

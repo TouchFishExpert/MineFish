@@ -1,0 +1,87 @@
+diff --git a/node_modules/mineflayer-auto-eat/dist/index.js b/node_modules/mineflayer-auto-eat/dist/index.js
+--- a/node_modules/mineflayer-auto-eat/dist/index.js
++++ b/node_modules/mineflayer-auto-eat/dist/index.js
+@@ -11,6 +11,7 @@ function plugin(bot) {
+         priority: 'saturation',
+         startAt: 16,
+         eatingTimeout: 3000,
++        attemptTimeout: 5000,
+         bannedFood: [
+             // puffer fish - only gives negative effects
+             'pufferfish',
+@@ -47,6 +48,30 @@ function plugin(bot) {
+             bot.food > 19)
+             return false;
+         bot.autoEat.isEating = true;
++        const attemptStarted = performance.now();
++        const attemptTimeout = bot.autoEat.options.attemptTimeout ?? 5000;
++        let expired = false, usingItem = false, completed = false;
++        const requiresConfirmation = bot.inventory.requiresConfirmation;
++        const timeoutError = stage => Object.assign(new Error(`Automatic consumption timed out during ${stage}; no successful completion was confirmed.`), { name: 'ConsumptionTimeout' });
++        const step = async (stage, work) => {
++            if (expired || performance.now() - attemptStarted >= attemptTimeout) throw timeoutError(stage);
++            let timer;
++            try {
++                const result = yieldable(work);
++                const value = await Promise.race([result, new Promise((resolve, reject) => {
++                    timer = setTimeout(() => { expired = true; reject(timeoutError(stage)); }, attemptTimeout - (performance.now() - attemptStarted));
++                })]);
++                if (expired) throw timeoutError(stage);
++                return value;
++            } finally { clearTimeout(timer); }
++        };
++        const yieldable = work => Promise.resolve().then(() => {
++            if (expired) throw timeoutError('cancelled operation');
++            return work();
++        });
++        const onStatus = packet => { if (packet.entityId === bot.entity.id && packet.entityStatus === 9) completed = true; };
++        bot._client.on('entity_status', onStatus);
++        try {
+         const canOffhand = !bot.supportFeature('doesntHaveOffHandSlot');
+         const priority = bot.autoEat.options.priority;
+         const banned = bot.autoEat.options.bannedFood;
+@@ -67,26 +92,39 @@ function plugin(bot) {
+         const bestFood = bestChoices[0];
+         const usedHand = offhand ? 'off-hand' : 'hand';
+         bot.emit('autoeat_started', bestFood, offhand);
+-        const requiresConfirmation = bot.inventory.requiresConfirmation;
+         if (bot.autoEat.options.ignoreInventoryCheck)
+             bot.inventory.requiresConfirmation = false;
+         const oldItem = bot.inventory.slots[bot.getEquipmentDestSlot(usedHand)];
+-        await bot.equip(bestFood, usedHand);
++        const countFood = () => bot.inventory.slots.slice(bot.inventory.inventoryStart ?? 9).filter(item => item?.name === bestFood.name).reduce((sum, item) => sum + item.count, 0);
++        const countBefore = countFood(), foodBefore = bot.food;
++        await step('equip food', () => bot.equip(bestFood, usedHand));
+         bot.inventory.requiresConfirmation = requiresConfirmation;
+         bot.deactivateItem();
+         bot.activateItem(offhand);
++        usingItem = true;
+         const time = performance.now();
+         while (bot.autoEat.isEating &&
+-            performance.now() - time < bot.autoEat.options.eatingTimeout &&
++            performance.now() - time < (bot.autoEat.options.eatingTimeout ?? 3000) &&
+             bot.inventory.slots[bot.getEquipmentDestSlot(usedHand)]?.name === bestFood.name) {
+-            await (0, promises_1.setTimeout)();
++            if (completed || countFood() < countBefore || bot.food > foodBefore) break;
++            await step('server consumption confirmation', () => (0, promises_1.setTimeout)(10));
++        }
++        if (!(completed || countFood() < countBefore || bot.food > foodBefore)) {
++            if (performance.now() - time >= (bot.autoEat.options.eatingTimeout ?? 3000)) throw timeoutError('server consumption confirmation');
++            throw Object.assign(new Error('Automatic consumption ended without a consumption signal or inventory/hunger change.'), {name: 'ConsumptionUnconfirmed'});
+         }
+         if (bot.autoEat.options.equipOldItem && oldItem && oldItem.name !== bestFood.name) {
+-            await bot.equip(oldItem, usedHand);
++            await step('restore equipment', () => bot.equip(oldItem, usedHand));
+         }
+         bot.autoEat.isEating = false;
+         bot.emit('autoeat_finished', bestFood, offhand);
+         return true;
++        } finally {
++            bot.inventory.requiresConfirmation = requiresConfirmation;
++            bot.autoEat.isEating = false;
++            bot._client.removeListener('entity_status', onStatus);
++            if (usingItem) { try { bot.deactivateItem(); } catch {} }
++        }
+     };
+     bot.on('playerCollect', async (who) => {
+         if (!bot.autoEat.options.checkOnItemPickup || who.username !== bot.username)

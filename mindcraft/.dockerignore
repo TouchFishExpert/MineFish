@@ -1,0 +1,9 @@
+.vscode
+node_modules
+bots/*/
+!bots/*
+keys.json
+login.private.json
+.env
+.env.*
+logs/

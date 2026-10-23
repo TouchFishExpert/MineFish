@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import { EventEmitter } from 'node:events';
+import { prepareMovementPacket, installLookGuard } from '../mindcraft/src/utils/movement_guard.js';
+
+assert.equal(prepareMovementPacket('position_look', {x:1,y:65,z:2,yaw:0,pitch:NaN}).valid, false);
+assert.equal(prepareMovementPacket('position', {x:Infinity,y:65,z:2}).valid, false);
+assert.equal(prepareMovementPacket('look', {yaw:0}).valid, false);
+const reused = {x:1,y:65,z:2,yaw:0,pitch:0,flags:{onGround:true}};
+const queued = prepareMovementPacket('position_look', reused);
+reused.pitch = NaN;
+reused.flags.onGround = false;
+assert.equal(queued.valid, true);
+assert.equal(queued.data.pitch, 0);
+assert.equal(queued.data.flags.onGround, true);
+const bot = new EventEmitter();
+let calls = 0;
+bot.look = async () => { calls++; };
+installLookGuard(bot);
+bot.emit('login');
+bot.emit('spawn');
+await bot.look(0, NaN);
+assert.equal(calls, 0);
+await bot.look(0.3, 0.2);
+assert.equal(calls, 1);
+console.log('PASS: NaN/Infinity rejection, movement snapshot isolation, and safe look input.');

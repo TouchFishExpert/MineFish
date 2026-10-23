@@ -1,0 +1,184 @@
+{
+  "profile": {
+    "type": "object",
+    "required": true,
+    "description": "机器人账号、模型等配置。所有机器人的系统提示词和对话示例统一读取 profiles/defaults/_default.json，上传角色文件或修改单个机器人不能覆盖共享系统层。记忆仍由每个机器人独立保存。",
+    "label": "机器人配置（系统提示词共享）"
+  },
+  "minecraft_version": {
+    "type": "string",
+    "description": "填写服务器版本；auto 表示自动检测。当前部署为 1.21.6。",
+    "default": "auto",
+    "label": "Minecraft 版本"
+  },
+  "host": {
+    "type": "string",
+    "description": "要连接的 Minecraft 服务器域名或 IP 地址。",
+    "default": "127.0.0.1",
+    "label": "服务器地址"
+  },
+  "port": {
+    "type": "number",
+    "description": "服务器端口；-1 表示自动探测。",
+    "default": 55916,
+    "label": "服务器端口"
+  },
+  "auth": {
+    "type": "string",
+    "description": "offline：离线账号；microsoft：微软正版账号。保留这些配置值的英文写法。",
+    "default": "offline",
+    "options": [
+      "offline",
+      "microsoft"
+    ],
+    "label": "账号认证方式"
+  },
+  "base_profile": {
+    "type": "string",
+    "description": "survival：生存；assistant：助手；creative：创造；god_mode：管理员行为模板。用于默认行为和技能设置，系统提示词仍由全局文件统一维护。",
+    "default": "survival",
+    "options": [
+      "survival",
+      "assistant",
+      "creative",
+      "god_mode"
+    ],
+    "label": "基础行为模板"
+  },
+  "load_memory": {
+    "type": "boolean",
+    "description": "启动时读取机器人上次保存的对话和摘要。",
+    "default": false,
+    "label": "加载上次记忆"
+  },
+  "init_message": {
+    "type": "string",
+    "description": "机器人出生后接收的第一条提示。",
+    "default": "Respond with hello world and your name",
+    "label": "进服初始提示"
+  },
+  "only_chat_with": {
+    "type": "array",
+    "description": "以 JSON 数组填写允许交流的玩家名称，注意大小写；空数组表示不限制玩家。",
+    "default": [],
+    "label": "响应玩家名单"
+  },
+  "speak": {
+    "type": "boolean",
+    "description": "是否在运行机器人的电脑上朗读消息。",
+    "default": false,
+    "label": "语音播报"
+  },
+  "language": {
+    "type": "string",
+    "description": "语言代码，例如 zh-CN。仅在启用翻译时调用翻译服务。",
+    "default": "en",
+    "label": "交流语言"
+  },
+  "allow_vision": {
+    "type": "boolean",
+    "description": "允许视觉模型分析游戏截图；需要可用的视觉模型配置。",
+    "default": false,
+    "label": "启用视觉模型"
+  },
+  "blocked_actions": {
+    "type": "array",
+    "description": "以 JSON 数组填写被禁用的动作名称，保留 !command 格式。",
+    "default": [
+      "!checkBlueprint",
+      "!checkBlueprintLevel",
+      "!getBlueprint",
+      "!getBlueprintLevel"
+    ],
+    "label": "禁用动作列表"
+  },
+  "relevant_docs_count": {
+    "type": "number",
+    "description": "生成代码时向模型提供的相关函数文档数量；-1 表示全部。",
+    "default": 5,
+    "label": "相关工具文档数量"
+  },
+  "max_messages": {
+    "type": "number",
+    "description": "模型上下文保留的近期消息数量，超出后压缩为摘要。",
+    "default": 15,
+    "label": "近期消息上限"
+  },
+  "num_examples": {
+    "type": "number",
+    "description": "向模型提供的参考对话示例数量。",
+    "default": 2,
+    "label": "对话示例数量"
+  },
+  "max_commands": {
+    "type": "number",
+    "description": "一轮回复允许连续执行的命令数量；-1 表示不限。",
+    "default": -1,
+    "label": "连续命令上限"
+  },
+  "narrate_behavior": {
+    "type": "boolean",
+    "description": "在游戏聊天中报告拾取物品等自动行为。",
+    "default": true,
+    "label": "播报自动行为"
+  },
+  "log_all_prompts": {
+    "type": "boolean",
+    "description": "把所有模型提示词写入日志，可能产生大量内容。",
+    "default": false,
+    "label": "记录完整提示词"
+  },
+  "show_command_syntax": {
+    "type": "string",
+    "description": "full：完整命令；shortened：简短提示；none：隐藏命令，只显示聊天。",
+    "default": "full",
+    "options": [
+      "full",
+      "shortened",
+      "none"
+    ],
+    "label": "命令显示方式"
+  },
+  "chat_ingame": {
+    "type": "boolean",
+    "description": "把机器人的回复发送到 Minecraft 聊天。",
+    "default": true,
+    "label": "显示游戏内回复"
+  },
+  "chat_bot_messages": {
+    "type": "boolean",
+    "description": "在游戏聊天中显示机器人之间的消息。",
+    "default": true,
+    "label": "公开机器人间对话"
+  },
+  "render_bot_view": {
+    "type": "boolean",
+    "description": "在网页中显示游戏画面供人观察；这不会为模型启用视觉能力。",
+    "default": false,
+    "label": "显示三维游戏视图"
+  },
+  "allow_insecure_coding": {
+    "type": "boolean",
+    "description": "允许 newAction 在本机执行模型生成的代码，存在安全风险；当前部署保持关闭。",
+    "default": false,
+    "label": "允许模型编写并执行代码"
+  },
+  "code_timeout_mins": {
+    "type": "number",
+    "description": "代码执行的最长时间；-1 表示不限。",
+    "default": -1,
+    "label": "代码执行时限（分钟）"
+  },
+  "task": {
+    "type": "object",
+    "description": "启动时交给机器人的任务 JSON；null 表示没有任务。",
+    "default": null,
+    "label": "启动任务"
+  },
+  "spawn_timeout": {
+    "type": "number",
+    "description": "等待机器人出生的最长时间，加载较慢时可适当增加。",
+    "default": 30,
+    "label": "出生等待时限（秒）"
+  }
+}
