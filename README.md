@@ -128,6 +128,16 @@ node deployment/trace-land-navigation.cjs
 
 上述方向为规划，不代表已经实现。
 
+## 当前正在解决的问题
+
+- 骑马、驾船、骑猪等骑乘寻路算法。
+- 装备鞘翅后的飞行算法。
+- 重新设计目录结构。
+- 修改当前系统结构，设计统一插件通信协议。
+- memory优化、上下文及参数优化。
+- 模型及模型参数动态识别
+- 面向带密码服务器场景的适配
+
 ## 来源与许可证
 
 本项目基于 Mindcraft 的 `develop` 分支，起始 commit：[`f6a9556cf756e6bd88a75cc2fa0d5aed7599b101`](https://github.com/mindcraft-bots/mindcraft/commit/f6a9556cf756e6bd88a75cc2fa0d5aed7599b101)。保留上游源码结构及 `mindcraft/LICENSE` 中的原始版权和 MIT 许可。
