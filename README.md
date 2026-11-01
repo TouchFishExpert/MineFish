@@ -2,7 +2,7 @@
 
 基于 [Mindcraft](https://github.com/mindcraft-bots/mindcraft) 二次开发的 Minecraft AI 队友系统，支持中文交流、多机器人协作、分层记忆、实时环境感知与控制台。
 
-项目仍在持续开发。本仓库保存当前后端、实际使用的网页控制台，以及独立的 Electron 桌面界面演示源码。
+项目仍在持续开发。下图为前端示例。
 <img width="1586" height="992" alt="280cff35131c2e0c4f40ef99d7156d3f" src="https://github.com/user-attachments/assets/72b2af43-70f3-482a-9c02-0a59f19449cc" />
 
 
@@ -137,6 +137,10 @@ node deployment/trace-land-navigation.cjs
 - memory优化、上下文及参数优化。
 - 模型及模型参数动态识别
 - 面向带密码服务器场景的适配
+- AI更新动作时会打断当前动作（比如AI砍树时聊天，会再发一遍砍树指令，导致之前的砍树中断）
+- !collectBlocks方法缺少一些方块，导致一些方块无法收集比如向日葵
+- 当AI附近被围墙挡住时，寻路算法会直接报错（可能会引入jev来解决，使用laya，但会做成可选项）
+- 环境感知当前不能看到周围的动物是否已经被驯服过
 
 ## 来源与许可证
 
