@@ -1,4 +1,4 @@
-# MineFish
+# MineFish（给我点赞⭐，激励我更新、打包和封装我的世界大肥鱼）
 
 基于 [Mindcraft](https://github.com/mindcraft-bots/mindcraft) 二次开发的 Minecraft AI 队友系统，支持中文交流、多机器人协作、分层记忆、实时环境感知与控制台。
 
